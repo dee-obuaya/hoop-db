@@ -1,0 +1,74 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}HOOP | Connection Types{% endblock %}
+
+{% block header %}
+<h2>Connection Types
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h2>
+{% endblock %}
+
+{% block content %}
+
+<form class="search" method="post" action="">
+    <input class="form-control" type="search" id="search_box" placeholder="Find connection" aria-label="Search">
+</form>
+
+{% for message in get_flashed_messages() %}
+<div class=flash>
+    {{ message }}
+</div>
+{% endfor %}
+
+<table class="table table-hover table-bordered">
+
+    <thead>
+        <tr>
+            <th>S/N</th>
+            <th>Connection Name</th>
+            <th>Connection Description</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody class="table-group-divider" id="search">
+        {% for conn in response: %}
+        <tr>
+            <td>{{ response.index(conn) + 1 }}</td>
+            <td><a href="{{ url_for('update_connection_type', conn_id=conn.id) }}">{{ conn.conn_name }}</a></td>
+            <td>{{ conn.conn_desc }}</td>
+            <td><a href="{{ url_for('delete_connection_type', conn_id=conn.id) }}" onclick="return confirm('Are you sure you want to delete this connection type?');">❌</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+</table>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        $("#search_box").on("input", function (e) {
+            search_text = $("#search_box").val();
+            $("#search").empty();
+            // console.log(text)
+            $.ajax({
+                method: "post",
+                url: "/search/connection-types",
+                data: { text: search_text },
+                success: function (res) {
+                    var data;
+                    $.each(res, function (index, value) {
+                        data += "<tr>";
+                        data += "<td>" + (index + 1) + "</td>";
+                        data += "<td><a href=''>" + value.conn_name + "</a></td>";
+                        data += "<td>" + value.conn_desc + "</td>";
+                        data += '<td><a href="" onclick="return confirm("Are you sure you want to delete this connection?");">❌</a></td>';
+                        data += "</tr>";
+                    });
+                    $("#search").html(data);
+                }
+            })
+        });
+    })
+</script>
+{% endblock %}

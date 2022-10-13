@@ -1,0 +1,103 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}HOOP| Link Activation Trackers{% endblock %}
+
+{% block header %}
+<h2>Link Activation Trackers
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h2>
+{% endblock %}
+
+{% block content %}
+
+<form class="search" method="post" action="">
+    <input class="form-control" type="text" name="search_term" id="search_box" placeholder="Find tracker" aria-label="Search">
+</form>
+
+{% for message in get_flashed_messages() %}
+<div class=flash>
+    {{ message }}
+</div>
+{% endfor %}
+
+<div class="table-responsive">
+
+    <table class="table align-middle table-hover table-bordered">
+
+        <thead>
+            <tr>
+                <th>S/N</th>
+                <th>Customer Name</th>
+                <th>Customer Code</th>
+                <th>Basestation ID</th>
+                <th>Service Description</th>
+                <th>Request Date</th>
+                <th>Link Completion Date</th>
+                <th>Implemented By</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider" id="search">
+            {% for customer in response: %}
+            <tr>
+                <td>{{ response.index(customer) + 1 }}</td>
+                <td>{{ customer.customer_name }} </td>
+                <td>
+                    <a href="{{ url_for('update_link_activation_tracker', customer_code=customer.customer_code)}}">
+                        {{ customer.customer_code }}
+                    </a>
+                </td>
+                <td>{{ customer.customer_basestation_id }}</td>
+                <td>{{ customer.customer_service_desc }} </td>
+                <td>{{ customer.customer_request_date }}</td>
+                <td>{{ customer.customer_link_completion_date }}</td>
+                <td>{{ customer.customer_implemented_by }}</td>
+
+                <td>
+                    <a role="button" href="{{ url_for('delete_link_activation_tracker', customer_code=customer.customer_code)}}"
+                        onclick="return confirm('Are you sure you want to delete this tracker?');">
+                        ❌
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        $("#search_box").on("input", function (e) {
+            search_text = $("#search_box").val();
+            $("#search").empty();
+            // console.log(text)
+            $.ajax({
+                method: "post",
+                url: "/search/link-activation-trackers",
+                data: { text: search_text },
+                success: function (res) {
+                    var data;
+                    $.each(res, function (index, value) {
+                        data += "<tr>";
+                        data += "<td>" + (index + 1) + "</td>";
+                        data += "<td>" + value.customer_name + "</td>";
+                        data += "<td><a href='{{ url_for('update_link_activation_tracker', customer_code=customer_code) }}'>" + value.customer_code + "</td>";
+                        data += "<td>" + value.customer_basestation_id + "</td>";
+                        data += "<td>" + value.customer_service_desc + "</td>";
+                        data += "<td>" + value.customer_request_date + "</td>";
+                        data += "<td>" + value.customer_link_completion_date + "</td>";
+                        data += "<td>" + value.customer_implemented_by + "</td>";
+                        data += "<td><a role='button' href='{{ url_for('delete_customer_prtg_detail', customer_code=customer_code) }}' onclick='return confirm('Are you sure you want to delete this customer?');'> ❌ </a></td>"
+                        data += "</tr>";
+                    });
+                    $("#search").html(data);
+                }
+            })
+        });
+    })
+</script>
+{% endblock %}

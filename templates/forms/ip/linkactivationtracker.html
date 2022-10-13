@@ -1,0 +1,130 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}HOOP | Link Activation Tracker Form{% endblock %}
+
+{% block header %}
+{% if is_edit: %}
+<h3 class="form-heading">Edit Link Activation Tracker
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h3>
+{% elif is_upload: %}
+<h3 class="form-heading">Upload Link Activation Tracker CSV
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h3>
+{% else: %}
+<h3 class="form-heading">Add New Link Activation Tracker
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h3>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="form-wrapper">
+    {% if is_upload: %}
+    <form method="post" class="form" enctype="multipart/form-data" action="{{ url_for('upload_link_activation_trackers_csv') }}">
+        {{ form.csrf_token }}
+
+        <div class="form-group">
+            <label for="file">Choose File</label>
+            {{ form.file(class_ = 'form-control', )}}
+        </div>
+
+        <input class="btn btn-primary btn-lg btn-block" type="submit" value="UPLOAD">
+    </form>
+    {% elif is_edit %} 
+    <form method="post" class="form" action="{{ url_for('update_link_activation_tracker', customer_code=form.customer_code.data) }}">
+        {{ form.csrf_token }}
+    
+        <div class="form-group">
+            <label for="customer_name">Name</label>
+            {{ form.customer_name(class_ = 'form-control', placeholder='Name', autofocus = true, disabled = true) }}
+        </div>
+    
+        <div class="form-group">
+            <label for="customer_code">Code</label>
+            {{ form.customer_code(class_ = 'form-control', placeholder='Code', autofocus = true, disabled = true) }}
+        </div>
+    
+        <div class="form-group">
+            <label for="customer_basestation_id">Basestation ID</label>
+            {{ form.customer_basestation_id(class_ = 'form-control', autofocus = true, disabled = true) }}
+        </div>
+    
+        <div class="form-group">
+            <label for="service_desc">Service Description</label>
+            {{ form.customer_service_desc(class_ = 'form-control', placeholder='Service Description', autofocus = true)
+            }}
+        </div>
+    
+        <div class="form-group">
+            <label for="request_date">Request Date</label>
+            {{ form.customer_request_date(class_ = 'form-control', placeholder='Request Date', autofocus = true) }}
+        </div>
+    
+        <div class="form-group">
+            <label for="link_completion_date">Link Completion Date</label>
+            {{ form.customer_link_completion_date(class_ = 'form-control', placeholder='Link Completion Date', autofocus
+            = trrue)
+            }}
+        </div>
+    
+        <div class="form-group">
+            <label for="implemented_by">Implemented By</label>
+            {{ form.customer_implemented_by(class_ = 'form-control', placeholder='Implemented By', autofocus = true) }}
+        </div>
+    
+        <div class="button">
+            <input type="submit" value="Edit Link Activation Tracker" class="btn btn-lg btn-block">
+        </div>
+    </form>
+    {% else: %}
+    <form method="post" class="form" action="{{ url_for('add_link_activation_tracker', customers_code=form.customer_code.data) }}">
+        {{ form.csrf_token }}
+
+        <div class="form-group">
+            <label for="customer_name">Name</label>
+            {{ form.customer_name(class_ = 'form-control', placeholder='Name', autofocus = true, disabled = true) }}
+        </div>
+
+        <div class="form-group">
+            <label for="customer_code">Code</label>
+            {{ form.customer_code(class_ = 'form-control', placeholder='Code', autofocus = true, disabled = true) }}
+        </div>
+
+        <div class="form-group">
+            <label for="customer_basestation_id">Basestation ID</label>
+            {{ form.customer_basestation_id(class_ = 'form-control', autofocus = true, disabled = true) }}
+        </div>
+
+        <div class="form-group">
+            <label for="service_desc">Service Description</label>
+            {{ form.customer_service_desc(class_ = 'form-control', placeholder='Service Description', autofocus = true)
+            }}
+        </div>
+
+        <div class="form-group">
+            <label for="request_date">Request Date</label>
+            {{ form.customer_request_date(class_ = 'form-control', placeholder='Request Date', autofocus = true) }}
+        </div>
+
+        <div class="form-group">
+            <label for="link_completion_date">Link Completion Date</label>
+            {{ form.customer_link_completion_date(class_ = 'form-control', placeholder='Link Completion Date', autofocus
+            = trrue)
+            }}
+        </div>
+
+        <div class="form-group">
+            <label for="implemented_by">Implemented By</label>
+            {{ form.customer_implemented_by(class_ = 'form-control', placeholder='Implemented By', autofocus = true) }}
+        </div>
+
+        <div class="button">
+            <input type="submit" value="Add Link Activation Tracker" class="btn btn-lg btn-block">
+        </div>
+    </form>
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}HOOP | Customer PRTG Details Form{% endblock %}
+
+{% block header %}
+{% if is_edit: %}
+<h2 class="form-heading">Edit Customer PRRTG Details
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h2>
+{% elif is_upload: %}
+<h2 class="form-heading">Upload Customer PRRTG Details CSV
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h2>
+{% else: %}
+<h2 class="form-heading">Add New Customer PRTG Details
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h2>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="form-wrapper">
+    {% if is_upload: %}
+    <form method="post" class="form" enctype="multipart/form-data" action="{{ url_for('upload_customers_prtg_csv') }}">
+        {{ form.csrf_token }}
+
+        <div class="form-group">
+            <label for="file">Choose File</label>
+            {{ form.file(class_ = 'form-control', )}}
+        </div>
+
+        <div class="button">
+            <input class="btn btn-lg btn-block" type="submit" value="upload">
+        </div>
+    </form>
+    {% elif is_edit %} 
+    <form method="post" class="form" action="{{url_for('update_customer_prtg_detail', customer_code=form.customer_code.data)}}">
+        {{ form.csrf_token }}
+    
+        <div class="form-group">
+            <label for="customer_name">Name</label>
+            {{ form.customer_name(class_ = 'form-control', autofocus = true, disabled = true) }}
+        </div>
+    
+        <div class="form-group">
+            <label for="customer_code">Code</label>
+            {{ form.customer_code(class_ = 'form-control', autofocus = true, disabled = true) }}
+        </div>
+    
+        <div class="form-group">
+            <label for="username">Username</label>
+            {{ form.customer_username(class_ = 'form-control', placeholder='Username', autofocus = true) }}
+        </div>
+    
+        <div class="form-group">
+            <label for="password">Password</label>
+            {{ form.customer_password(class_ = 'form-control', placeholder='Password', autofocus = true) }}
+        </div>
+    
+        <div class="button">
+            <input type="submit" value="Edit PRTG Details" class="btn btn-lg btn-block">
+        </div>
+    </form>
+    {% else: %}
+    <form method="post" class="form" action="{{url_for('add_customer_prtg_detail', customers_code=form.customer_code.data)}}">
+        {{ form.csrf_token }}
+
+        <div class="form-group">
+            <label for="customer_name">Name</label>
+            {{ form.customer_name(class_ = 'form-control', autofocus = true, disabled = true) }}
+        </div>
+
+        <div class="form-group">
+            <label for="customer_code">Code</label>
+            {{ form.customer_code(class_ = 'form-control', autofocus = true, disabled = true) }}
+        </div>
+
+        <div class="form-group">
+            <label for="username">Username</label>
+            {{ form.customer_username(class_ = 'form-control', placeholder='Username', autofocus = true) }}
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            {{ form.customer_password(class_ = 'form-control', placeholder='Password', autofocus = true) }}
+        </div>
+
+        <div class="button">
+            <input type="submit" value="Add PRTG Details" class="btn btn-lg btn-block">
+        </div>
+    </form>
+    {% endif %}
+</div>
+
+{% endblock %}

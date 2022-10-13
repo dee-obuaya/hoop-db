@@ -1,0 +1,76 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}HOOP | Vlans{% endblock %}
+
+{% block header %}
+<h2>Vlans
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h2>
+{% endblock %}
+
+{% block content %}
+
+<form class="search" method="post" action="/search/vlans">
+    <input class="form-control" type="text" id="search_box" placeholder="Find vlan" aria-label="Search">
+</form>
+
+{% for message in get_flashed_messages() %}
+<div class=flash>
+    {{ message }}
+</div>
+{% endfor %}
+
+<table class="table table-hover table-bordered">
+
+    <thead>
+        <tr>
+            <th>S/N</th>
+            <th>Vlan ID</th>
+            <th>Customer Assigned</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody class="table-group-divider" id="search">
+        {% for vlan in response: %}
+        <tr>
+            <td>{{ response.index(vlan) + 1 }}</td>
+            <td>{{ vlan.vlan_id }}</td>
+            <td>{{ vlan.customer_assigned }}</td>
+            <td><a href="{{ url_for('delete_vlan', vlan_id=vlan.vlan_id) }}" onclick="return confirm('Are you sure you want to delete this vlan?');">❌</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+</table>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        $("#search_box").on("input", function (e) {
+            search_text = $("#search_box").val();
+            $("#search").empty();
+            // console.log(text)
+            $.ajax({
+                method: "post",
+                url: "/search/vlans",
+                data: { text: search_text },
+                success: function (res) {
+                    console.log(res);
+                    var data;
+                    $.each(res, function (index, value) {
+                        data += "<tr>";
+                        data += "<td>" + (index + 1) + "</td>";
+                        data += "<td><a href='{{url_for('update_partner', partner_id=partner_id)}}'>" + value.vlan_id + "</a></td>";
+                        data += "<td>" + value.customer_assigned + "</td>";
+                        data += '<td><a href="{{ url_for("delete_vlan", vlan_id=vlan_id) }}" onclick="return confirm("Are you sure you want to delete this vlan?");">❌</a></td>';
+                        data += "</tr>";
+                    });
+                    console.log(data)
+                    $("#search").html(data);
+                }
+            })
+        });
+    })
+</script>
+{% endblock %}

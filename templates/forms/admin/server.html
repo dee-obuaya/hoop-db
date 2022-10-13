@@ -1,0 +1,79 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}HOOP | Admin{% endblock %}
+
+{% block header %}
+{% if is_edit: %}
+<h2 class="form-heading">Edit Smartguard Server
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h2>
+{% elif is_upload %} 
+<h2 class="form-heading">Upload Smartguard Server CSV 
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h2>
+{% else: %}
+<h2 class="form-heading">Add New Smartguard Server
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h2>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="form-wrapper">
+    {% if is_upload: %}
+    <form method="post" class="form" enctype="multipart/form-data" action="{{ url_for('upload_servers_csv') }}">
+        {{ form.csrf_token }}
+
+        <div class="form-group">
+            <label for="file">Choose File</label>
+            {{ form.file(class_ = 'form-control', )}}
+        </div>
+
+        <input class="btn btn-lg btn-block" type="submit" value="upload">
+    </form>
+    {% elif is_edit %} 
+    <form method="post" class="form" action="{{url_for('update_server', server_id=form.id.data)}}">
+        {{ form.csrf_token }}
+    
+        <div class="form-group">
+            <label for="server_name">Server Name</label>
+            {{ form.server_name(class_ = 'form-control', placeholder='Server Name', autofocus = true) }}
+        </div>
+    
+        <div class="form-group">
+            <label for="server_ip">Server IP</label>
+            {{ form.server_ip(class_ = 'form-control', placeholder='Server IP', autofocus = true) }}
+        </div>
+    
+        <div class="form-group">
+            <label for="server_location">Server Location</label>
+            {{ form.server_location(class_='form-control', placeholder='Server Location', autofocus = true)}}
+        </div>
+    
+        <input type="submit" value="Edit Smartguard Server" , class="btn btn-lg btn-block">
+    </form>
+    {% else: %}
+    <form method="post" class="form" action="{{url_for('add_server')}}">
+        {{ form.csrf_token }}
+
+        <div class="form-group">
+            <label for="server_name">Server Name</label>
+            {{ form.server_name(class_ = 'form-control', placeholder='Server Name', autofocus = true) }}
+        </div>
+
+        <div class="form-group">
+            <label for="server_ip">Server IP</label>
+            {{ form.server_ip(class_ = 'form-control', placeholder='Server IP', autofocus = true) }}
+        </div>
+
+        <div class="form-group">
+            <label for="server_location">Server Location</label>
+            {{ form.server_location(class_='form-control', placeholder='Server Location', autofocus = true)}}
+        </div>
+
+        <input type="submit" value="Add Smartguard Server" class="btn btn-lg btn-block">
+    </form>
+    {% endif %}
+</div>
+
+{% endblock %}

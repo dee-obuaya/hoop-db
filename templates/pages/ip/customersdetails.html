@@ -1,0 +1,105 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}HOOP | Customers Details{% endblock %}
+
+{% block header %}
+<h2>Customers Details
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h2>
+{% endblock %}
+
+{% block content %}
+<form class="search" method="post" action="">
+    <input class="form-control" type="search" id="search_box" placeholder="Find customer" aria-label="Search">
+</form>
+
+{% for message in get_flashed_messages() %}
+<div class=flash>
+    {{ message }}
+</div>
+{% endfor %}
+
+<div class="table-responsive">
+    <table class="table align-middle table-hover table-bordered">
+
+        <thead>
+            <tr>
+                <th>S/N</th>
+                <th>Customer Name</th>
+                <th>Customer Code</th>
+                <th>Current Status</th>
+                <th>Location (State)</th>
+                <th>Partner</th>
+                <th>Service Type</th>
+                <th>Service Plan</th>
+                <th>Bandwidth Plan</th>
+                <th>Contact Person</th>
+                <th>Phone Number</th>
+                <th>Email ID</th>
+                <th>Physical Address</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider" id="search">
+            {% for customer in response: %}
+            <tr>
+                <td>{{ response.index(customer) + 1 }}</td>
+                <td>{{ customer.customer_name }} </td>
+                <td>{{ customer.customer_code }}</td>
+                <td>{{ customer.customer_status }} </td>
+                <td>{{ customer.customer_location }}</td>
+                <td>{{ customer.customer_partner }}</td>
+                <td>{{ customer.customer_service_type }}</td>
+                <td>{{ customer.customer_service_plan }}</td>
+                <td>{{ customer.customer_bandwidth_plan }}</td>
+                <td>{{ customer.customer_contact_person }}</td>
+                <td>{{ customer.customer_phone_number }}</td>
+                <td>{{ customer.customer_email }}</td>
+                <td>{{ customer.customer_physical_address }}</td>
+                <td></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        $("#search_box").on("input", function (e) {
+            search_text = $("#search_box").val();
+            $("#search").empty();
+            // console.log(text)
+            $.ajax({
+                method: "post",
+                url: "/search/customers-details",
+                data: { text: search_text },
+                success: function (res) {
+                    var data;
+                    $.each(res, function (index, value) {
+                        data += "<tr>";
+                        data += "<td>" + (index + 1) + "</td>";
+                        data += "<td>" + value.customer_name + "</td>";
+                        data += "<td>" + value.customer_code + "</td>";
+                        data += "<td>" + value.customer_status + "</td>";
+                        data += "<td>" + value.customer_location + "</td>";
+                        data += "<td>" + value.customer_partner + "</td>";
+                        data += "<td>" + value.customer_service_type + "</td>";
+                        data += "<td>" + value.customer_service_plan + "</td>";
+                        data += "<td>" + value.customer_bandwidth_plan + "</td>";
+                        data += "<td>" + value.customer_contact_person + "</td>";
+                        data += "<td>" + value.customer_phone_number + "</td>";
+                        data += "<td>" + value.customer_email + "</td>";
+                        data += "<td>" + value.customer_physical_address + "</td>";
+                        data += "</tr>";
+                    });
+                    $("#search").html(data);
+                }
+            })
+        });
+    })
+</script>
+{% endblock %}

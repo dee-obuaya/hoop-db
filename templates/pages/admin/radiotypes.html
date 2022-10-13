@@ -1,0 +1,72 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}HOOP | Radio Types{% endblock %}
+
+{% block header %}
+<h2>Radio Types
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h2>
+{% endblock %}
+
+{% block content %}
+
+<form class="search" method="post" action="">
+    <input class="form-control" type="search" id="search_box" placeholder="Find radio"
+        aria-label="Search">
+</form>
+
+{% for message in get_flashed_messages() %}
+<div class=flash>
+    {{ message }}
+</div>
+{% endfor %}
+
+<table class="table table-hover table-bordered">
+
+    <thead>
+        <tr>
+            <th>S/N</th>
+            <th>Radio Name</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody class="table-group-divider" id="search">
+        {% for radio in response: %}
+        <tr>
+            <td>{{ response.index(radio) + 1 }}</td>
+            <td><a href="{{ url_for('update_radio', radio_id=radio.id) }}">{{ radio.radio_name }}</a></td>
+            <td><a href="{{ url_for('delete_radio', radio_id=radio.id) }}" onclick="return confirm('Are you sure you want to delete this radio?');">❌</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+</table>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        $("#search_box").on("input", function (e) {
+            search_text = $("#search_box").val();
+            $("#search").empty();
+            // console.log(text)
+            $.ajax({
+                method: "post",
+                url: "/search/radios",
+                data: { text: search_text },
+                success: function (res) {
+                    var data;
+                    $.each(res, function (index, value) {
+                        data += "<tr>";
+                        data += "<td>" + (index + 1) + "</td>";
+                        data += "<td><a href=''>" + value.radio_name + "</a></td>";
+                        data += '<td><a href="" onclick="return confirm("Are you sure you want to delete this radio?");">❌</a></td>';
+                        data += "</tr>";
+                    });
+                    $("#search").html(data);
+                }
+            })
+        });
+    })
+</script>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}HOOP{% endblock %}
+
+{% block header %} 
+<h2>Oops!</h2>
+{% endblock %} 
+
+{% block content %}
+<h4>{{ response['error'] }}. <span>{{ response['message'] }}</span> </h4>
+{% endblock %}

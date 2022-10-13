@@ -1,0 +1,71 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}HOOP | Connection Type Form{% endblock %}
+
+{% block header %}
+
+{% if is_edit: %}
+<h2 class="form-heading">Edit Connection Type
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h2>
+{% elif is_upload: %} 
+<h2 class="form-heading">Upload Connection Type CSV
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h2>
+{% else: %}
+<h2 class="form-heading">Add New Connection Type
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h2>
+{% endif %}
+
+{% endblock %}
+
+{% block content %}
+<div class="form-wrapper">
+    {% if is_upload: %}
+    <form method="post" class="form" enctype="multipart/form-data" action="{{ url_for('upload_connection_types_csv') }}">
+        {{ form.csrf_token }}
+    
+        <div class="form-group">
+            <label for="file">Choose File</label>
+            {{ form.file(class_ = 'form-control', )}}
+        </div>
+    
+        <input class="btn btn-lg btn-block" type="submit" value="upload">
+    </form>
+    {% elif is_edit %} 
+    <form method="post" class="form" action="{{url_for('update_connection_type', conn_id=form.id.data)}}">
+        {{ form.csrf_token }}
+    
+        <div class="form-group">
+            <label for="conn_name">Connection Name</label>
+            {{ form.conn_name(class_ = 'form-control', autofocus = true) }}
+        </div>
+    
+        <div class="form-group">
+            <label for="conn_desc">Connection Description</label>
+            {{ form.conn_desc(class_ = 'form-control', placeholder='Connection Description', autofocus = true) }}
+        </div>
+        
+        <input type="submit" value="Edit Connection Type" class="btn btn-lg btn-block">
+    </form>
+    {% else: %}
+    <form method="post" class="form" action="{{url_for('add_connection_type')}}">
+        {{ form.csrf_token }}
+
+        <div class="form-group">
+            <label for="conn_name">Connection Name</label>
+            {{ form.conn_name(class_ = 'form-control', autofocus = true) }}
+        </div>
+
+        <div class="form-group">
+            <label for="conn_desc">Connection Description</label>
+            {{ form.conn_desc(class_ = 'form-control', placeholder='Connection Description', autofocus = true) }}
+        </div>
+        
+        <input type="submit" value="Add Connection Type" class="btn btn-lg btn-block">
+    </form>
+    {% endif %}
+</div>
+
+{% endblock %}

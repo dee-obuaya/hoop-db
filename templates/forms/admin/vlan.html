@@ -1,0 +1,69 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}HOOP | Vlan{% endblock %}
+
+{% block header %}
+{% if is_edit %} 
+<h2 class="form-heading">Edit Vlan
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h2>
+{% elif is_upload: %}
+<h2 class="form-heading">Upload CSV
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h2>
+{% else: %}
+<h2 class="form-heading">Add New Vlan
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h2>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="form-wrapper">
+    {% if is_upload: %}
+    <form method="post" class="form" enctype="multipart/form-data" action="{{ url_for('upload_vlans_csv') }}">
+        {{ form.csrf_token }}
+    
+        <div class="form-group">
+            <label for="file">Choose File</label>
+            {{ form.file(class_ = 'form-control', )}}
+        </div>
+    
+        <input class="btn btn-lg btn-block" type="submit" value="UPLOAD">
+    </form>
+    {% elif is_edit %} 
+    <form method="post" action="{{ url_for('update_vlan', vlan_id=form.vlan_id.data) }}" class="form">
+        {{ form.csrf_token }}
+    
+        <div class="form-group">
+            <label for="vlan_id">Vlan ID</label>
+            {{ form.vlan_id(class_ = 'form-control', placeholder='Vlan ID') }}
+        </div>
+    
+        <div class="form-group">
+            <label for="customer_assigned">Customer Assigned</label>
+            {{ form.customer_assigned(class_ = 'form-control', placeholder='Customer Code') }}
+        </div>
+    
+        <input type="submit" class="btn btn-lg btn-block" value="edit vlan">
+    
+    </form>
+    {% else: %}
+    <form method="post" action="{{ url_for('add_vlan') }}" class="form">
+        {{ form.csrf_token }}
+
+        <div class="form-group">
+            <label for="vlan_id">Vlan ID</label>
+            {{ form.vlan_id(class_ = 'form-control', placeholder='Vlan ID') }}
+        </div>
+
+        <div class="form-group">
+            <label for="customer_assigned">Customer Assigned</label>
+            {{ form.customer_assigned(class_ = 'form-control', placeholder='Customer Code') }}
+        </div>
+
+        <input type="submit" class="btn btn-lg btn-block" value="add vlan">
+    </form>
+    {% endif %} 
+</div>
+{% endblock %}

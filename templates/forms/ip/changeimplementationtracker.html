@@ -1,0 +1,171 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}HOOP | Change Implementation Tracker Form{% endblock %}
+
+{% block header %}
+{% if is_edit: %}
+<h2 class="form-heading">Edit Change Implementation Tracker
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h2>
+{% elif is_upload: %}
+<h2 class="form-heading">Upload Change Implementation Tracker CSV
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h2>
+{% else: %}
+<h2 class="form-heading">Add New Change Implementation Tracker
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h2>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="form-wrapper">
+    {% if is_upload: %}
+    <form method="post" class="form" enctype="multipart/form-data" action="{{ url_for('upload_change_implementation_trackers_csv') }}">
+        {{ form.csrf_token }}
+
+        <div class="form-group">
+            <label for="file">Choose File</label>
+            {{ form.file(class_ = 'form-control')}}
+        </div>
+
+        <input class="btn btn-lg btn-block" type="submit" value="UPLOAD">
+    </form>
+    {% elif is_edit %} 
+    <form method="post" class="form" action="{{url_for('update_change_implementation_tracker', customer_code=form.customer_code.data)}}">
+        {{ form.csrf_token }}
+    
+        <div class="form-group">
+            <label for="customer_name">Customer Name</label>
+            {{ form.customer_name(class_ = 'form-control', autofocus = true, disabled = true) }}
+        </div>
+    
+        <div class="form-group">
+            <label for="customer_code">Customer Code</label>
+            {{ form.customer_code(class_ = 'form-control', autofocus = true, disabled = true) }}
+        </div>
+    
+        <div class="form-group">
+            <label for="change_id">Change ID</label>
+            {{ form.customer_change_id(class_ = 'form-control', placeholder='Change ID', autofocus = true, disabled =
+            true) }}
+        </div>
+    
+        <div class="form-group">
+            <label for="customer_change_desc">Change Description</label>
+            {{ form.customer_change_desc(class_ = 'form-control', placeholder='Change Description', autofocus = true) }}
+        </div>
+    
+        <div class="form-group">
+            <label for="change_type">Change Type</label>
+            {{ form.customer_change_type(class_ = 'form-control', placeholder='Change Type', autofocus = true) }}
+        </div>
+    
+        <div class="form-group">
+            <label for="customer_instructed_by">Instructed By</label>
+            {{ form.customer_instructed_by(class_ = 'form-control', placeholder='Instructed By', autofocus = true) }}
+        </div>
+    
+        <div class="form-group">
+            <label for="customer_approved_by">Approved By</label>
+            {{ form.customer_approved_by(class_ = 'form-control', placeholder='Approved By', autofocus = true) }}
+        </div>
+    
+        <div class="form-group">
+            <label for="customer_request_date">Request Date</label>
+            {{ form.customer_request_date(class_ = 'form-control', placeholder='Request Date', autofocus = true) }}
+        </div>
+    
+        <div class="form-group">
+            <label for="customer_implementation_date_and_time">Implementation Date & Time</label>
+            {{ form.customer_implementation_date_and_time(class_ = 'form-control', placeholder='YYYY-MM-DD HH:MM',
+            autofocus = true)}}
+        </div>
+    
+        <div class="form-group">
+            <label for="customer_implemented_by">Implemented By</label>
+            {{form.customer_implemented_by(class_ = 'form-control', placeholder='Implemented By', autofocus = true) }}
+        </div>
+    
+        <div class="form-group">
+            <label for="customer_status">Status</label>
+            {{ form.customer_status(class_ = 'form-control', placeholder='Status', autofocus = true) }}
+        </div>
+    
+        <input type="submit" value="Edit Change Implementation Tracker" class="btn btn-lg btn-block">
+    </form>
+    {% else: %}
+    <form method="post" class="form" action="{{url_for('add_change_implementation_tracker', customers_code=form.customer_code.data)}}">
+        {{ form.csrf_token }}
+
+        <div class="form-group">
+            <label for="customer_name">Customer Name</label>
+            {{ form.customer_name(class_ = 'form-control', autofocus = true, disabled = true) }}
+        </div>
+
+        <div class="form-group">
+            <label for="customer_code">Customer Code</label>
+            {{ form.customer_code(class_ = 'form-control', autofocus = true, disabled = true) }}
+        </div>
+
+        {% if not is_edit: %}
+        <div class="form-group">
+            <label for="change_id">Change ID</label>
+            {{ form.customer_change_id(class_ = 'form-control', placeholder='Change ID', autofocus = true) }}
+        </div>
+        {% else: %}
+        <div class="form-group">
+            <label for="change_id">Change ID</label>
+            {{ form.customer_change_id(class_ = 'form-control', placeholder='Change ID', autofocus = true, disabled =
+            true) }}
+        </div>
+        {% endif %}
+
+        <div class="form-group">
+            <label for="customer_change_desc">Change Description</label>
+            {{ form.customer_change_desc(class_ = 'form-control', placeholder='Change Description', autofocus = true) }}
+        </div>
+
+        <div class="form-group">
+            <label for="change_type">Change Type</label>
+            {{ form.customer_change_type(class_ = 'form-control', placeholder='Change Type', autofocus = true) }}
+        </div>
+
+        <div class="form-group">
+            <label for="customer_instructed_by">Instructed By</label>
+            {{ form.customer_instructed_by(class_ = 'form-control', placeholder='Instructed By', autofocus = true) }}
+        </div>
+
+        <div class="form-group">
+            <label for="customer_approved_by">Approved By</label>
+            {{ form.customer_approved_by(class_ = 'form-control', placeholder='Approved By', autofocus = true) }}
+        </div>
+
+        <div class="form-group">
+            <label for="customer_request_date">Request Date</label>
+            {{ form.customer_request_date(class_ = 'form-control', placeholder='Request Date', autofocus = true) }}
+        </div>
+
+        <div class="form-group">
+            <label for="customer_implementation_date_and_time">Implementation Date & Time</label>
+            {{ form.customer_implementation_date_and_time(class_ = 'form-control', placeholder='YYYY-MM-DD HH:MM',
+            autofocus = true)}}
+        </div>
+
+        <div class="form-group">
+            <label for="customer_implemented_by">Implemented By</label>
+            {{form.customer_implemented_by(class_ = 'form-control', placeholder='Implemented By', autofocus = true) }}
+        </div>
+
+        <div class="form-group">
+            <label for="customer_status">Status</label>
+            {{ form.customer_status(class_ = 'form-control', placeholder='Status', autofocus = true) }}
+        </div>
+
+        <input type="submit" value="Add Change Implementation Tracker" class="btn btn-lg btn-block">
+    </form>
+    {% endif %}
+</div>
+
+{% endblock %}

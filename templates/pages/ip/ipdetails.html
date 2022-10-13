@@ -1,0 +1,109 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}HOOP | IP Details{% endblock %}
+
+{% block header %}
+<h2>Customers IP Details
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h2>
+{% endblock %}
+
+{% block content %}
+
+<form class="search" method="post" action="">
+    <input class="form-control" type="search" id="search_box" placeholder="Find customer" aria-label="Search">
+</form>
+
+{% for message in get_flashed_messages() %}
+<div class=flash>
+    {{ message }}
+</div>
+{% endfor %}
+
+<div class="table-responsive">
+
+    <table class="table align-middle table-hover table-bordered">
+
+        <thead>
+            <tr>
+                <th>S/N</th>
+                <th>Customer Name</th>
+                <th>Customer Code</th>
+                <th>Radio Subnet</th>
+                <th>MU IP</th>
+                <th>SU IP</th>
+                <th>Provider Edge Router</th>
+                <th>Customer WAN IP</th>
+                <th>Customer WAN Subnet</th>
+                <th>Customer WAN Gateway</th>
+                <th>WAN Routing Protocol</th>
+                <th>Customer IP</th>
+                <th>Subnet Mask</th>
+                <th>Gateway</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider" id="search">
+            {% for customer in response: %}
+            <tr>
+                <td>{{ response.index(customer) + 1 }}</td>
+                <td>{{ customer.customer_name }}</td>
+                <td>{{ customer.customer_code }}</td>
+                <td>{{ customer.customer_subnet }} </td>
+                <td>{{ customer.customer_mu_ip }}</td>
+                <td>{{ customer.customer_su_ip }}</td>
+                <td>{{ customer.customer_provider_edge_router }}</td>
+                <td>{{ customer.customer_wan_ip }}</td>
+                <td>{{ customer.customer_wan_subnet }}</td>
+                <td>{{ customer.customer_wan_gateway }}</td>
+                <td>{{ customer.customer_wan_routing_protocol }}</td>
+                <td>{{ customer.customer_ip }}</td>
+                <td>{{ customer.customer_subnet_mask }}</td>
+                <td>{{ customer.customer_gateway }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        $("#search_box").on("input", function (e) {
+            search_text = $("#search_box").val();
+            $("#search").empty();
+            // console.log(text)
+            $.ajax({
+                method: "post",
+                url: "/search/ip-details",
+                data: { text: search_text },
+                success: function (res) {
+                    var data;
+                    $.each(res, function (index, value) {
+                        data += "<tr>";
+                        data += "<td>" + (index + 1) + "</td>";
+                        data += "<td>" + value.customer_name + "</td>";
+                        data += "<td>" + value.customer_code + "</td>";
+                        data += "<td>" + value.customer_subnet + "</td>";
+                        data += "<td>" + value.customer_mu_ip + "</td>";
+                        data += "<td>" + value.customer_su_ip + "</td>";
+                        data += "<td>" + value.customer_provider_edge_router + "</td>";
+                        data += "<td>" + value.customer_wan_ip + "</td>";
+                        data += "<td>" + value.customer_wan_subnet + "</td>";
+                        data += "<td>" + value.customer_wan_gateway + "</td>";
+                        data += "<td>" + value.customer_wan_routing_protocol + "</td>";
+                        data += "<td>" + value.customer_ip + "</td>";
+                        data += "<td>" + value.customer_subnet_mask + "</td>";
+                        data += "<td>" + value.customer_gateway + "</td>";
+                        data += "</tr>";
+                    });
+                    $("#search").html(data);
+                }
+            })
+        });
+    })
+</script>
+{% endblock %}

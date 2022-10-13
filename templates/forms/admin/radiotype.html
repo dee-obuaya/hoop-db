@@ -1,0 +1,60 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}HOOP | Radios{% endblock %}
+
+{% block header %}
+
+{% if is_edit %}
+<h2 class="form-heading">Edit Radio
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h2>
+{% elif is_upload: %}
+<h2 class="form-heading">Upload CSV
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h2>
+{% else: %}
+<h2 class="form-heading">Add New Radio
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h2>
+{% endif %} 
+
+{% endblock %}
+
+{% block content %}
+<div class="form-wrapper">
+    {% if is_upload: %}
+    <form method="post" class="form" enctype="multipart/form-data" action="{{ url_for('upload_radios_csv') }}">
+        {{ form.csrf_token }}
+    
+        <div class="form-group">
+            <label for="file">Choose File</label>
+            {{ form.file(class_ = 'form-control', )}}
+        </div>
+    
+        <input class="btn btn-lg btn-block" type="submit" value="UPLOAD">
+    </form>
+    {% elif is_edit %} 
+    <form method="post" action="{{ url_for('update_radio', radio_id=form.id.data) }}" class="form">
+        {{ form.csrf_token }}
+    
+        <div class="form-group">
+            <label for="radio_name">Radio Name</label>
+            {{ form.radio_name(class_ = 'form-control', placeholder='Radio Name') }}
+        </div>
+    
+        <input type="submit" class="btn btn-lg btn-block" value="edit radio">
+    </form>
+    {% else: %}
+    <form method="post" action="{{ url_for('add_radio') }}" class="form">
+        {{ form.csrf_token }}
+
+        <div class="form-group">
+            <label for="radio_name">Radio Name</label>
+            {{ form.radio_name(class_ = 'form-control', placeholder='Radio Name') }}
+        </div>
+
+        <input type="submit" class="btn btn-lg btn-block" value="add radio">
+    </form>
+    {% endif %} 
+</div>
+{% endblock %}

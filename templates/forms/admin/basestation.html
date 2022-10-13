@@ -1,0 +1,91 @@
+{% extends "layouts/base.html" %}
+{% block title %}HOOP | Basestation Form{% endblock %}
+
+{% block header %}
+
+{% if is_edit: %}
+<h2 class="form-heading">Edit Basestation
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h2>
+{% elif is_upload: %}
+<h2 class="form-heading">Upload CSV
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h2>
+{% else: %}
+<h2 class="form-heading">Add New Basestation
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h2>
+{% endif %}
+
+{% endblock %}
+
+{% block content %}
+<div class="form-wrapper">
+    {% if is_upload %}
+    <form method="post" class="form" enctype="multipart/form-data" action="{{ url_for('upload_basestations_csv') }}">
+        {{ form.csrf_token }}
+
+        <div class="form-group">
+            <label for="file">Choose File</label>
+            {{ form.file(class_ = 'form-control', )}}
+        </div>
+
+        <input class="btn btn-lg btn-block" type="submit" value="UPLOAD">
+    </form>
+    {% elif is_edit %} 
+    <form method="post" class="form" action="{{url_for('update_basestation', basestation_id=form.basestation_id.data)}}">
+        {{ form.csrf_token }}
+
+        <div class="form-group">
+            <label for="basestation_id">Basestation ID</label>
+            {{ form.basestation_id(class_ = 'form-control', autofocus = true, disabled = true) }}
+        </div>
+    
+        <div class="form-group">
+            <label for="basestation_name">Basestation Name</label>
+            {{ form.basestation_name(class_ = 'form-control', placeholder='Basestation Name', autofocus = true) }}
+        </div>
+    
+        <div class="form-group">
+            <label for="basestation_location">Basestation Location</label>
+            {{ form.basestation_location(class_ = 'form-control', autofocus = true) }}
+        </div>
+    
+        <div class="form-group">
+            <label for="basestation_contact">Basestation Conatct</label>
+            {{ form.basestation_contact(class_ = 'form-control', placeholder='xxxx-xxx-xxxx', autofocus = true) }}
+        </div>
+    
+        <input type="submit" value="Edit Basestation" class="btn btn-lg btn-block">
+    
+    </form>
+    {% else %}
+    <form method="post" class="form" action="{{url_for('add_basestation')}}">
+        {{ form.csrf_token }}
+
+        <div class="form-group">
+            <label for="basestation_id">Basestation ID</label>
+            {{ form.basestation_id(class_ = 'form-control', autofocus = true) }}
+        </div>
+
+        <div class="form-group">
+            <label for="basestation_name">Basestation Name</label>
+            {{ form.basestation_name(class_ = 'form-control', placeholder='Basestation Name', autofocus = true) }}
+        </div>
+
+        <div class="form-group">
+            <label for="basestation_location">Basestation Location</label>
+            {{ form.basestation_location(class_ = 'form-control', autofocus = true) }}
+        </div>
+
+        <div class="form-group">
+            <label for="basestation_contact">Basestation Conatct</label>
+            {{ form.basestation_contact(class_ = 'form-control', placeholder='xxxx-xxx-xxxx', autofocus = true) }}
+        </div>
+
+        <input type="submit" value="Add Basestation" class="btn btn-lg btn-block">
+        
+    </form>
+    {% endif %}
+</div>
+{% endblock %}
