@@ -31,30 +31,30 @@
 
         <input class="btn btn-lg btn-block" type="submit" value="UPLOAD">
     </form>
-    {% elif is_edit %} 
+    {% elif is_edit %}
     <form method="post" class="form" action="{{url_for('update_partner', partner_id=form.partner_id.data)}}">
         {{ form.csrf_token }}
-    
+
         <div class="form-group">
             <label for="partner_id">Partner ID</label>
             {{ form.partner_id(class_ = 'form-control', placeholder='Partner ID', autofocus = true, disabled = true) }}
         </div>
-    
+
         <div class="form-group">
             <label for="name">Partner Name</label>
             {{ form.partner_name(class_ = 'form-control', placeholder='Partner Name', autofocus = true) }}
         </div>
-    
+
         <div class="form-group">
             <label for="contact">Partner Conatct</label>
             {{ form.partner_contact(class_ = 'form-control', placeholder='xxxx-xxx-xxxx', autofocus = true) }}
         </div>
-    
+
         <div class="form-group">
             <label for="address">Partner Address</label>
             {{ form.partner_address(class_ = 'form-control', placeholder='Address', autofocus = true) }}
         </div>
-    
+
         <input type="submit" value="Edit Partner" class="btn btn-lg btn-block">
     </form>
     {% else: %}
@@ -74,17 +74,17 @@
         {% endif %}
 
         <div class="form-group">
-            <label for="name">Partner Name</label>
+            <label for="partner_name">Partner Name</label>
             {{ form.partner_name(class_ = 'form-control', placeholder='Partner Name', autofocus = true) }}
         </div>
 
         <div class="form-group">
-            <label for="contact">Partner Conatct</label>
+            <label for="partner_contact">Partner Conatct</label>
             {{ form.partner_contact(class_ = 'form-control', placeholder='xxxx-xxx-xxxx', autofocus = true) }}
         </div>
 
         <div class="form-group">
-            <label for="address">Partner Address</label>
+            <label for="partner_address">Partner Address</label>
             {{ form.partner_address(class_ = 'form-control', placeholder='Address', autofocus = true) }}
         </div>
 

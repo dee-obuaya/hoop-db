@@ -1,7 +1,10 @@
 import os
 import random
 import string
-from decouple import config
+# from decouple import config
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def id_generator(size=32, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
@@ -18,11 +21,8 @@ DEBUG = True
 # Upload folder
 UPLOAD_FOLDER = 'static/files'
 
-# Flask Admin
-FLASK_ADMIN_SWATCH = 'flatly'
-
 # Connect to the database
-SQLALCHEMY_DATABASE_URI = 'postgresql://{}:{}@{}/{}'.format(config('db_user'), config('db_password'), config('db_host'), config('db_name'))
+SQLALCHEMY_DATABASE_URI = 'postgresql://{}:{}@{}/{}'.format(os.getenv('db_user'), os.getenv('db_password'), os.getenv('db_host'), os.getenv('db_name'))
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 SQLALCHEMY_ENGINE_OPTIONS = {
     "max_overflow": 15,

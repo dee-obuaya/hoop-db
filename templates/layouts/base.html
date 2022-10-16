@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} {% endblock %}</title>
+
+    <!-- Styles -->
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="../../static/css/main.css">
+
+    <!-- /Styles -->
+
+    <!-- Favicons -->
+    <link rel="shortcut icon" href="../../static/ico/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="../../static/ico/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../../static/ico/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../static/ico/favicon-16x16.png">
+    <link rel="manifest" href="../../static/ico/site.webmanifest">
+    <link rel="shortcut icon" href="../../static/ico/favicon.ico">
+
+    <!-- /Favicons -->
+
+    <!-- Scripts -->
+
+    <script src="https://kit.fontawesome.com/cd5c2232ec.js" crossorigin="anonymous"></script>
+
+    <!-- /Scripts -->
+</head>
+
+<body>
+
+    <div class="container d-flex flex-column flex-md-row">
+        <!-- Nav Sidebar -->
+        <nav class="navbar navbar-expand-md navbar-light d-flex flex-md-column sidebar" id="sidebar">
+            <a href="#">
+                <img src="../../static/img/logo-sm-removebg-preview.png" alt="Hoop Telecoms Logo" width="200"
+                    height="240">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle Navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse w-200" id="navbarSupportedContent">
+                <ul class="navbar-nav w-200 d-flex flex-md-column text-center text-md-end">
+                    <li class="nav-item has-submenu">
+                        <a href="#" class="nav-link">Basestations</a>
+                        <ul class="submenu collapse">
+                            <li><a href="#" class="nav-link">View Basestations</a></li>
+                            <li><a href="#" class="nav-link">Add Basestation</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item has-submenu">
+                        <a href="#" class="nav-link">Customers</a>
+                        <ul class="submenu collapse">
+                            <li><a href="#" class="nav-link">View Customers</a></li>
+                            <li><a href="#" class="nav-link">View Customers Details</a></li>
+                            <li><a href="#" class="nav-link">View Customers Link Details</a></li>
+                            <li><a href="#" class="nav-link">View Customers IP Details</a></li>
+                            <li><a href="#" class="nav-link">Add Customer</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item has-submenu">
+                        <a href="#" class="nav-link">Customers Password</a>
+                        <ul class="submenu collapse">
+                            <li><a href="#" class="nav-link">View Customers Password</a></li>
+                            <li><a href="#" class="nav-link">Add Customer Password</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item has-submenu">
+                        <a href="#" class="nav-link">Customers PRTG</a>
+                        <ul class="submenu collapse">
+                            <li><a href="#" class="nav-link">View Customers PRTG</a></li>
+                            <li><a href="#" class="nav-link">Add Customer PRTG</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item has-submenu">
+                        <a href="#" class="nav-link">Link Activation Trackers</a>
+                        <ul class="submenu collapse">
+                            <li><a href="#" class="nav-link">View Link Activation Trackers</a></li>
+                            <li><a href="#" class="nav-link">Add Link Activation Tracker</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item has-submenu">
+                        <a href="#" class="nav-link">Change Implementation Trackers</a>
+                        <ul class="submenu collapse">
+                            <li><a href="#" class="nav-link">View Change Implementation Trackers</a></li>
+                            <li><a href="#" class="nav-link">Add Change Implementation Trackers</a></li>
+                        </ul>
+                    </li>
+                    {% if current_user.department == 'IP' %}
+                    <li class="nav-item has-submenu">
+                        <a href="#" class="nav-link">Partners</a>
+                        <ul class="submenu collapse">
+                            <li><a href="#" class="nav-link">View Partners</a></li>
+                            <li><a href="#" class="nav-link">Add Partner</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item has-submenu">
+                        <a href="#" class="nav-link">Servers</a>
+                        <ul class="submenu collapse">
+                            <li><a href="#" class="nav-link">View Servers</a></li>
+                            <li><a href="#" class="nav-link">Add Server</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item has-submenu">
+                        <a href="#" class="nav-link">Vlans</a>
+                        <ul class="submenu collapse">
+                            <li><a href="#" class="nav-link">View Vlans</a></li>
+                            <li><a href="#" class="nav-link">Add Vlan</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item has-submenu">
+                        <a href="#" class="nav-link">Connections</a>
+                        <ul class="submenu collapse">
+                            <li><a href="#" class="nav-link">View Connections</a></li>
+                            <li><a href="#" class="nav-link">Add Connection</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item has-submenu">
+                        <a href="#" class="nav-link">Radios</a>
+                        <ul class="submenu collapse">
+                            <li><a href="#" class="nav-link">View Radios</a></li>
+                            <li><a href="#" class="nav-link">Add Radio</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item has-submenu">
+                        <a href="#" class="nav-link">Service Types</a>
+                        <ul class="submenu collapse">
+                            <li><a href="#" class="nav-link">View Service Types</a></li>
+                            <li><a href="#" class="nav-link">Add Service Type</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item has-submenu">
+                        <a href="#" class="nav-link">Service Plans</a>
+                        <ul class="submenu collapse">
+                            <li><a href="#" class="nav-link">View Service Plans</a></li>
+                            <li><a href="#" class="nav-link">Add Service Plan</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item has-submenu">
+                        <a href="#" class="nav-link">Bandwidth Plans</a>
+                        <ul class="submenu collapse">
+                            <li><a href="#" class="nav-link">View Bandwidth Plans</a></li>
+                            <li><a href="#" class="nav-link">Add Bandwidth Plan</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item has-submenu">
+                        <a href="#" class="nav-link">CPEs</a>
+                        <ul class="submenu collapse">
+                            <li><a href="#" class="nav-link">View CPEs</a></li>
+                            <li><a href="#" class="nav-link">Add CPE</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                    <li>
+                        <a href="#" class="nav-link">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="ps-0 ps-md-4 flex-grow-1">
+            <header class="major">
+                {% block header %} {% endblock %}
+                <h1>home</h1>
+            </header>
+
+            <div id="content">
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-block alert-info fade in">
+                    <a class="close" data-dismiss="alert">&times;</a>
+                    {{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+
+                {% if (request.endpoint == 'get_customers') or
+                (request.endpoint == 'search_customers') %}
+                <form class="search" method="post" action="/venues/search">
+                    <input class="form-control" type="search" name="search_term" placeholder="Find a venue"
+                        aria-label="Search">
+                </form>
+                {% endif %}
+                {% if (request.endpoint == 'get_customers_details') or
+                (request.endpoint == 'search_customers_details') %}
+                <form class="search" method="post" action="/artists/search">
+                    <input class="form-control" type="search" name="search_term" placeholder="Find an artist"
+                        aria-label="Search">
+                </form>
+                {% endif %}
+                {% if (request.endpoint == 'get_link_details') or
+                (request.endpoint == 'search_link_details') %}
+                <form class="search" method="post" action="/venues/search">
+                    <input class="form-control" type="search" name="search_term" placeholder="Find a venue"
+                        aria-label="Search">
+                </form>
+                {% endif %}
+                {% if (request.endpoint == 'get_ip_details') or
+                (request.endpoint == 'search_ip_details') %}
+                <form class="search" method="post" action="/artists/search">
+                    <input class="form-control" type="search" name="search_term" placeholder="Find an artist"
+                        aria-label="Search">
+                </form>
+                {% endif %}
+                {% if (request.endpoint == 'get_customers_password') or
+                (request.endpoint == 'search_customers_password') %}
+                <form class="search" method="post" action="/artists/search">
+                    <input class="form-control" type="search" name="search_term" placeholder="Find an artist"
+                        aria-label="Search">
+                </form>
+                {% endif %}
+                {% if (request.endpoint == 'get_customers_prtg') or
+                (request.endpoint == 'search_customers_prtg') %}
+                <form class="search" method="post" action="/artists/search">
+                    <input class="form-control" type="search" name="search_term" placeholder="Find an artist"
+                        aria-label="Search">
+                </form>
+                {% endif %}
+                {% if (request.endpoint == 'get_link_activation_trackers') or
+                (request.endpoint == 'search_link_activation_trackers') %}
+                <form class="search" method="post" action="/artists/search">
+                    <input class="form-control" type="search" name="search_term" placeholder="Find an artist"
+                        aria-label="Search">
+                </form>
+                {% endif %}
+                {% if (request.endpoint == 'get_change_implementation_trackers') or
+                (request.endpoint == 'search_change_implementation_trackers') %}
+                <form class="search" method="post" action="/artists/search">
+                    <input class="form-control" type="search" name="search_term" placeholder="Find an artist"
+                        aria-label="Search">
+                </form>
+                {% endif %}
+
+                {% block content %} {% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"
+        integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+        </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"
+        integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous">
+        </script>
+    <script>window.jQuery || document.write('<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.1.min.js"><\/script>')</script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous">
+        </script>
+</body>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll('.sidebar .nav-link').forEach(function (element) {
+
+            element.addEventListener('click', function (e) {
+
+                let nextEl = element.nextElementSibling;
+                let parentEl = element.parentElement;
+
+                if (nextEl) {
+                    e.preventDefault();
+                    let mycollapse = new bootstrap.Collapse(nextEl);
+
+                    if (nextEl.classList.contains('show')) {
+                        mycollapse.hide();
+                    } else {
+                        mycollapse.show();
+                        // find other submenus with class=show
+                        var opened_submenu = parentEl.parentElement.querySelector('.submenu.show');
+                        // if it exists, then close all of them
+                        if (opened_submenu) {
+                            new bootstrap.Collapse(opened_submenu);
+                        }
+                    }
+                }
+            }); // addEventListener
+        }) // forEach
+    });
+// DOMContentLoaded  end
+</script>
+
+</html>
