@@ -1,24 +1,28 @@
-{% extends 'layouts/base.html' %}
+{% extends 'layouts/adminbase.html' %}
 
 {% block title %}HOOP | Partners{% endblock %}
 
 {% block header %}
 <h2>Partners
-    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+    <a href="{{ url_for('admin_index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
 </h2>
 {% endblock %}
 
 {% block content %}
-
-<form class="search" method="post" action="">
-    <input class="form-control" type="text" id="search_box" placeholder="Find partner" aria-label="Search">
-</form>
 
 {% for message in get_flashed_messages() %}
 <div class=flash>
     {{ message }}
 </div>
 {% endfor %}
+
+{% if is_search %}
+{% if (response.count > 1) or (response.count == 0) %}
+<h3>{{ response.count }} results for '{{ search_term }}'</h3>
+{% else %}
+<h3>{{ response.count }} result for '{{ search_term }}'</h3>
+{% endif %}
+{% endif %}
 
 <table class="table table-hover table-bordered">
 
@@ -32,54 +36,35 @@
             <th></th>
         </tr>
     </thead>
-    <tbody class="table-group-divider" id="search">
+    <tbody class="table-group-divider">
+        {% if not is_search %}
         {% for partner in response: %}
         <tr>
             <td>{{ response.index(partner) + 1 }}</td>
-            <td><a href="{{url_for('update_partner', partner_id=partner.partner_id) }}">{{ partner.partner_id }}</a></td>
+            <td><a href="{{url_for('update_partner', partner_id=partner.partner_id) }}">{{ partner.partner_id }}</a>
+            </td>
             <td>{{ partner.partner_name }}</td>
             <td>{{ partner.partner_contact }}</td>
             <td>{{ partner.partner_address }}</td>
-            <td><a href="{{ url_for('delete_partner', partner_id=partner.partner_id) }}" onclick="return confirm('Are you sure you want to delete this partner?');">❌</a></td>
+            <td><a href="{{ url_for('delete_partner', partner_id=partner.partner_id) }}"
+                    onclick="return confirm('Are you sure you want to delete this partner?');">❌</a></td>
         </tr>
         {% endfor %}
+        {% else %}
+        {% for partner in response['data']: %}
+        <tr>
+            <td>{{ response['data'].index(partner) + 1 }}</td>
+            <td><a href="{{url_for('update_partner', partner_id=partner.partner_id) }}">{{ partner.partner_id }}</a>
+            </td>
+            <td>{{ partner.partner_name }}</td>
+            <td>{{ partner.partner_contact }}</td>
+            <td>{{ partner.partner_address }}</td>
+            <td><a href="{{ url_for('delete_partner', partner_id=partner.partner_id) }}"
+                    onclick="return confirm('Are you sure you want to delete this partner?');">❌</a></td>
+        </tr>
+        {% endfor %}
+        {% endif %}
     </tbody>
 
 </table>
-{% endblock %}
-
-{% block scripts %}
-<script>
-    $(document).ready(function () {
-        $("#search_box").on("input", function (e) {
-            search_text = $("#search_box").val();
-            $("#search").empty();
-            // console.log(text)
-            $.ajax({
-                method: "post",
-                url: "/search/partners",
-                data: { text: search_text },
-                success: function (res) {
-                    console.log(res);
-                    var data;
-                    var partner_id;
-                    $.each(res, function (index, value) {
-                        partner_id += value.partner_id;
-                        console.log(partner_id)
-                        data += "<tr>";
-                        data += "<td>" + (index + 1) + "</td>";
-                        data += "<td><a href='{{url_for('update_partner', partner_id=partner_id)}}'>" + value.partner_id + "</a></td>";
-                        data += "<td>" + value.partner_name + "</td>";
-                        data += "<td>" + value.partner_contact + "</td>";
-                        data += "<td>" + value.partner_address + "</td>";
-                        data += '<td><a href="{{ url_for("delete_partner", partner_id=partner_id) }}" onclick="return confirm("Are you sure you want to delete this vlan?");">❌</a></td>';
-                        data += "</tr>";
-                    });
-                    console.log(data)
-                    $("#search").html(data);
-                }
-            })
-        });
-    })
-</script>
 {% endblock %}

@@ -1,4 +1,4 @@
-{% extends 'layouts/base.html' %}
+{% extends 'layouts/adminbase.html' %}
 
 {% block title %}HOOP | Users{% endblock %}
 
@@ -9,10 +9,6 @@
 {% endblock %}
 
 {% block content %}
-
-<form class="search" method="post" action="/search/users">
-    <input class="form-control" type="text" id="search_box" placeholder="Find user" aria-label="Search">
-</form>
 
 {% for message in get_flashed_messages() %}
 <div class=flash>
@@ -32,7 +28,7 @@
             <th></th>
         </tr>
     </thead>
-    <tbody class="table-group-divider" id="search">
+    <tbody class="table-group-divider">
         {% for user in response: %}
         <tr>
             <td>{{ response.index(user) + 1 }}</td>
@@ -49,36 +45,4 @@
     </tbody>
 
 </table>
-{% endblock %}
-
-{% block scripts %}
-<script>
-    $(document).ready(function () {
-        $("#search_box").on("input", function (e) {
-            search_text = $("#search_box").val();
-            $("#search").empty();
-            // console.log(text)
-            $.ajax({
-                method: "post",
-                url: "/search/users",
-                data: { text: search_text },
-                success: function (res) {
-                    console.log(res);
-                    var data;
-                    $.each(res, function (index, value) {
-                        data += "<tr>";
-                        data += "<td>" + (index + 1) + "</td>";
-                        data += "<td>" + value.username + "</td>";
-                        data += "<td>" + value.password + "</td>";
-                        data += "<td>" + value.department + "</td>";
-                        data += "<td>" + value.privileges + "</td>";
-                        data += "</tr>";
-                    });
-                    console.log(data)
-                    $("#search").html(data);
-                }
-            })
-        });
-    })
-</script>
 {% endblock %}

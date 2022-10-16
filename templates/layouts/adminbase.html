@@ -62,9 +62,9 @@
                     <li class="nav-item has-submenu">
                         <a href="#" class="nav-link">Partners</a>
                         <ul class="submenu collapse">
-                            <li><a href="#" class="nav-link">View Partners</a></li>
-                            <li><a href="#" class="nav-link">Add Partner</a></li>
-                            <li><a href="#" class="nav-link">Upload CSV</a></li>
+                            <li><a href="{{ url_for('get_partners') }}" class="nav-link">View Partners</a></li>
+                            <li><a href="{{ url_for('add_partner') }}" class="nav-link">Add Partner</a></li>
+                            <li><a href="{{ url_for('upload_partners_csv') }}" class="nav-link">Upload CSV</a></li>
                         </ul>
                     </li>
                     <li class="nav-item has-submenu">
@@ -180,13 +180,13 @@
                 {% endwith %}
 
                 {% if (request.endpoint == 'get_users') or (request.endpoint == 'search_users') %}
-                <form class="search" method="post" action="">
+                <form class="search" method="post" action="/users/search">
                     <input class="form-control" type="search" name="search_term" placeholder="Find a venue"
                         aria-label="Search">
                 </form>
                 {% endif %}
                 {% if (request.endpoint == 'get_partners') or (request.endpoint == 'search_partners') %}
-                <form class="search" method="post" action="">
+                <form class="search" method="post" action="/partners/search">
                     <input class="form-control" type="search" name="search_term" placeholder="Find an artist"
                         aria-label="Search">
                 </form>
@@ -245,25 +245,28 @@
                         aria-label="Search">
                 </form>
                 {% endif %}
-                {% if (request.endpoint == 'get_customers_password') or (request.endpoint == 'search_customers_password') %}
+                {% if (request.endpoint == 'get_customers_password') or (request.endpoint ==
+                'search_customers_password') %}
                 <form class="search" method="post" action="">
                     <input class="form-control" type="search" name="search_term" placeholder="Find an artist"
                         aria-label="Search">
                 </form>
                 {% endif %}
-                {% if (request.endpoint == 'get_customers_prtg') or (request.endpoint == 'search_customers_prtg') %} 
+                {% if (request.endpoint == 'get_customers_prtg') or (request.endpoint == 'search_customers_prtg') %}
                 <form class="search" method="post" action="">
                     <input class="form-control" type="search" name="search_term" placeholder="Find an artist"
                         aria-label="Search">
                 </form>
                 {% endif %}
-                {% if (request.endpoint == 'get_link_activation_trackers') or (request.endpoint == 'search_link_activation_trackers') %}
+                {% if (request.endpoint == 'get_link_activation_trackers') or (request.endpoint ==
+                'search_link_activation_trackers') %}
                 <form class="search" method="post" action="">
                     <input class="form-control" type="search" name="search_term" placeholder="Find an artist"
                         aria-label="Search">
                 </form>
                 {% endif %}
-                {% if (request.endpoint == 'get_change_implementation_trackers') or (request.endpoint == 'search_change_implementation_trackers') %}
+                {% if (request.endpoint == 'get_change_implementation_trackers') or (request.endpoint ==
+                'search_change_implementation_trackers') %}
                 <form class="search" method="post" action="">
                     <input class="form-control" type="search" name="search_term" placeholder="Find an artist"
                         aria-label="Search">

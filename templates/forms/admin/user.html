@@ -1,10 +1,10 @@
-{% extends 'layouts/base.html' %}
+{% extends 'layouts/adminbase.html' %}
 
 {% block title %}HOOP | User{% endblock %}
 
 {% block header %}
 
-{% if is_edit %} 
+{% if is_edit %}
 <h2 class="form-heading">Edit User
     <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
 </h2>
@@ -24,66 +24,66 @@
     {% if is_upload: %}
     <form method="post" class="form" enctype="multipart/form-data" action="{{ url_for('upload_users_csv') }}">
         {{ form.csrf_token }}
-    
+
         <div class="form-group">
             <label for="file">Choose File</label>
             {{ form.file(class_ = 'form-control', )}}
         </div>
-    
+
         <input class="btn btn-lg btn-block" type="submit" value="UPLOAD">
     </form>
-    {% elif %} 
+    {% elif is_edit %}
     <form method="post" class="form" action="{{url_for('update_user', user_id=form.id.data)}}">
         {{ form.csrf_token }}
-    
+
         <div class="form-group">
             <label for="username">Username</label>
             {{ form.username(class_ = 'form-control', placeholder='Username', autofocus = true) }}
         </div>
-    
+
         <div class="form-group">
             <label for="password">Password</label>
             {{ form.password(class_ = 'form-control', placeholder='Password', autofocus = true) }}
         </div>
-    
+
         <div class="form-group">
             <label for="department">Department</label>
             {{ form.department(class_ = 'form-control', placeholder='Department', autofocus = true) }}
         </div>
-    
+
         <div class="form-group">
             <label for="privileges">Privileges</label>
-            {{ form.privileges(class_ = 'form-control', placeholder='Privileges', autofocus = true) }}
+            {{ form.privileges(class_ = 'form-control', placeholder='Privileges', autofocus = true, disabled=true) }}
         </div>
-        
+
         <input type="submit" value="Edit User" class="btn btn-lg btn-block">
     </form>
     {% else: %}
     <form method="post" class="form" action="{{url_for('add_user')}}">
         {{ form.csrf_token }}
-    
+
         <div class="form-group">
             <label for="username">Username</label>
             {{ form.username(class_ = 'form-control', placeholder='Username', autofocus = true) }}
         </div>
-    
+
         <div class="form-group">
             <label for="password">Password</label>
             {{ form.password(class_ = 'form-control', placeholder='Password', autofocus = true) }}
         </div>
-    
+
         <div class="form-group">
             <label for="department">Department</label>
             {{ form.department(class_ = 'form-control', placeholder='Department', autofocus = true) }}
         </div>
-    
+
         <div class="form-group">
             <label for="privileges">Privileges</label>
             {{ form.privileges(class_ = 'form-control', placeholder='Privileges', autofocus = true) }}
         </div>
-        
+
         <input type="submit" value="Add User" class="btn btn-lg btn-block">
     </form>
-    {% endif %} 
+    {% endif %}
 </div>
 {% endblock %}

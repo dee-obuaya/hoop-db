@@ -10,7 +10,7 @@ from flask_migrate import Migrate
 from functools import wraps
 from werkzeug.utils import secure_filename
 from models import CPE, BandwidthPlan, Basestation, Connection, Partner, Radio, Server, ServicePlan, ServiceType, User, Vlan, db
-from forms import CSVUploadForm, UserForm
+from forms import CSVUploadForm, PartnerForm, UserForm
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -28,11 +28,23 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
+def create_key():
+    """
+    Generates a key and save it into a file
+    """
+    key = Fernet.generate_key()
+
+    with open('fernet.key', 'wb') as key_file:
+        key_file.write(key)
+
+    print('Key created')
+
+
 def call_key():
     '''
     Loads the key from the file where it is stored.
     '''
-    return open('fernet.key', 'rb').read()
+    return open('fernet.key', 'r').read()
 
 
 def admin_only(f):
@@ -153,6 +165,7 @@ def get_users():
     formatted_selection = [user.format() for user in selection.all()]
 
     key = call_key()
+    print(key)
     fernet = Fernet(key)
 
     return render_template('pages/admin/users.html', response=formatted_selection, fernet=fernet, current_user=current_user)
@@ -313,7 +326,7 @@ def update_user(user_id):
 @login_required
 @admin_only
 def delete_user(user_id):
-    user =User.query.get(user_id)
+    user = User.query.get(user_id)
 
     try:
         user.delete()
@@ -333,7 +346,10 @@ def delete_user(user_id):
 @login_required
 @admin_and_ip
 def get_partners():
-    pass
+    selection = Partner.query.order_by(Partner.partner_id)
+    formatted_selection = [user.format() for user in selection.all()]
+
+    return render_template('pages/admin/partners.html', response=formatted_selection, current_user=current_user)
 
 
 @app.route('/partners/search', methods=['GET', 'POST'])
@@ -343,33 +359,61 @@ def search_partners():
     search_query = request.form.get('search_term', '')
     search_response = Partner.query.filter(
         Partner.partner_id.ilike(f'%{search_query}%') | Partner.partner_id.contains(search_query) |
-        Partner.partner_name.ilike(f'%{search_query}%') | Partner.partner_name.contains(
-            search_query.title())
+        Partner.partner_name.ilike(f'%{search_query}%') | Partner.partner_name.contains(search_query)
     )
     response = {
         "count": search_response.count(),
         "data": [partner.format() for partner in search_response.all()]
     }
     print(response)
-    return render_template('pages/admin/partners.html', response=response, search_term=search_query, current_user=current_user)
+    return render_template('pages/admin/partners.html', response=response, is_search=True, search_term=search_query, current_user=current_user)
 
 
 @app.route('/partners/new', methods=['GET', 'POST'])
 @login_required
 @admin_and_ip
 def add_partner():
-    pass
+    form = PartnerForm()
+
+    if form.validate_on_submit():
+        if Partner.query.filter_by(partner_id=form.partner_id.data).one_or_none():
+            flash(f'User {form.partner_id.data} already exists!')
+            return redirect(url_for('add_partner'))
+        else:
+            try:
+                partner = Partner(
+                    partner_id=form.partner_id.data,
+                    partner_name=form.partner_name.data,
+                    partner_contact=form.partner_contact.data,
+                    partner_address=form.partner_address.data
+                )
+                partner.insert()
+                flash(f'Partner {form.partner_name.data} created.')
+                return redirect(url_for('get_partners'))
+            except:
+                db.session.rollback()
+                print(sys.exc_info())
+                flash(
+                    f'Partner {form.partner_name.data} could not be created. Try again.')
+                return redirect(url_for('add_partner'))
+            finally:
+                db.session.close()
+    else:
+        for field, message in form.errors.items():
+            flash(field + ' - ' + str(message), 'danger')
+
+    return render_template('forms/admin/partner.html', form=form, current_user=current_user)
 
 
 @app.route('/partners/upload', methods=['GET', 'POST'])
 @login_required
 @admin_only
 def upload_partners_csv():
-    form = CSVUploadForm()
+    upload_form = CSVUploadForm()
 
-    if form.validate_on_submit():
+    if upload_form.validate_on_submit():
         # get the uploaded file
-        uploaded_file = form.file.data
+        uploaded_file = upload_form.file.data
 
         filename = secure_filename(uploaded_file.filename)
 
@@ -379,28 +423,94 @@ def upload_partners_csv():
         uploaded_file.save(file_path)
 
         # Use Pandas to parse the CSV file
-        col_names = []
+        col_names = ['partner_id', 'partner_name',
+                     'partner_contact', 'partner_address']
         csvData = pd.read_csv(file_path, names=col_names, header=None)
+
+        error = False
         # Loop through the Rows
         for i, row in csvData.iterrows():
             try:
-                pass
+                partner = Partner(
+                    partner_id=row['partner_id'],
+                    partner_name=row['partner_name'],
+                    partner_contact=row['partner_contact'],
+                    partner_address=row['partner_address']
+                )
+                partner.insert()
             except:
-                pass
+                db.session.rollback()
+                error = True
+                print(sys.exc_info())
+
+        db.session.close()
+        if error:
+            flash('Something went wrong, could not upload partners.')
+        else:
+            flash('Partners uploaded successfully.')
+        return redirect(url_for('get_partners'))
+    else:
+        for field, message in upload_form.errors.items():
+            flash(field + ' - ' + str(message), 'danger')
+
+    return render_template('forms/admin/partner.html', form=upload_form, is_upload=True, current_user=current_user)
 
 
 @app.route('/partners/<partner_id>', methods=['GET', 'POST', 'PATCH'])
 @login_required
 @admin_and_ip
-def update_partner():
-    pass
+def update_partner(partner_id):
+    partner = Partner.query.filter_by(partner_id=partner_id).one_or_none()
+
+    edit_form = PartnerForm(
+        partner_id=partner.partner_id,
+        partner_name=partner.partner_name,
+        partner_contact=partner.partner_contact,
+        partner_address=partner.partner_address
+    )
+
+    if edit_form.validate_on_submit():
+        try:
+            partner.partner_id = edit_form.partner_id.data
+            partner.partner_name = edit_form.partner_name
+            partner.partner_contact = edit_form.partner_contact
+            partner.partner_address = edit_form.partner_address
+
+            partner.update()
+            flash(f'Partner {edit_form.partner_id.data} updated successfully.')
+            return redirect(url_for('get_partners'))
+        except:
+            db.session.rollback()
+            print(sys.exc_info())
+            flash(
+                f'Partner {edit_form.partner_id.data} could not be updated successfully. Try again.')
+            return redirect(url_for('update_partner', partner_id=edit_form.partner_id.data))
+        finally:
+            db.session.close()
+    else:
+        for field, message in edit_form.errors.items():
+            flash(field + ' - ' + str(message), 'danger')
+
+    return render_template('forms/admin/partner.html', form=edit_form, is_edit=True, current_user=current_user)
 
 
 @app.route('/partners/<partner_id>/delete', methods=['GET', 'DELETE'])
 @login_required
 @admin_and_ip
-def delete_partner():
-    pass
+def delete_partner(partner_id):
+    partner = Partner.query.filter_by(partner_id=partner_id).one_or_none()
+
+    try:
+        partner.delete()
+        flash(f'Deleted partner.')
+        return redirect(url_for('get_partners'))
+    except:
+        db.session.rollback()
+        print(sys.exc_info())
+        flash(f'Could not delete partner. Try again.')
+        return redirect(url_for('get_partners'))
+    finally:
+        db.session.close()
 
 
 # --------------------------------------------- BASESTATIONS ------------------------------------------->
