@@ -1,9 +1,8 @@
-from json import load
 import os
 import sys
 import pandas as pd
 from cryptography.fernet import Fernet
-from flask import Flask, jsonify, render_template, redirect, url_for, flash, abort, request
+from flask import Flask, render_template, redirect, url_for, flash, abort, request
 from flask_bootstrap import Bootstrap
 from flask_cors import CORS
 from flask_login import login_user, LoginManager, login_required, current_user, logout_user
