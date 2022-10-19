@@ -2,8 +2,9 @@
 venv
 migrations
 __pycache__
+static/files/
 
-fernet.key 
+*.key 
 
  OS generated files #
 ######################

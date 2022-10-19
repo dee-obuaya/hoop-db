@@ -1,20 +1,33 @@
+{% if current_user.privileges != 'Admin' %}
 {% extends 'layouts/base.html' %}
+{% else %}
+{% extends 'layouts/adminbase.html' %}
+{% endif %}
 
-{% block title %}HOOP | Admin{% endblock %}
+{% block title %}HOOP | Server Form{% endblock %}
 
 {% block header %}
 {% if is_edit: %}
-<h2 class="form-heading">Edit Smartguard Server
+<h2 class="form-heading">Edit Server
+{% if (current_user.privileges != 'Admin') %}
     <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
-</h2>
-{% elif is_upload %} 
-<h2 class="form-heading">Upload Smartguard Server CSV 
+    {% else %}
+    <a href="{{ url_for('admin_index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+    {% endif %}</h2>
+{% elif is_upload %}
+<h2 class="form-heading">Upload Server CSV
+{% if (current_user.privileges != 'Admin') %}
     <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
-</h2>
+    {% else %}
+    <a href="{{ url_for('admin_index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+    {% endif %}</h2>
 {% else: %}
-<h2 class="form-heading">Add New Smartguard Server
+<h2 class="form-heading">Add New Server
+{% if (current_user.privileges != 'Admin') %}
     <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
-</h2>
+    {% else %}
+    <a href="{{ url_for('admin_index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+    {% endif %}</h2>
 {% endif %}
 {% endblock %}
 
@@ -29,34 +42,42 @@
             {{ form.file(class_ = 'form-control', )}}
         </div>
 
-        <input class="btn btn-lg btn-block" type="submit" value="upload">
+        <div class="button">
+            <input class="btn btn-lg btn-block" type="submit" value="upload">
+        </div>
     </form>
-    {% elif is_edit %} 
-    <form method="post" class="form" action="{{url_for('update_server', server_id=form.id.data)}}">
+    {% elif is_edit %}
+    <form method="post" class="form" action="{{url_for('update_server', server_name=form.server_name.data)}}">
         {{ form.csrf_token }}
-    
+
         <div class="form-group">
             <label for="server_name">Server Name</label>
             {{ form.server_name(class_ = 'form-control', placeholder='Server Name', autofocus = true) }}
         </div>
-    
+
         <div class="form-group">
             <label for="server_ip">Server IP</label>
             {{ form.server_ip(class_ = 'form-control', placeholder='Server IP', autofocus = true) }}
         </div>
-    
+
         <div class="form-group">
             <label for="server_location">Server Location</label>
             {{ form.server_location(class_='form-control', placeholder='Server Location', autofocus = true)}}
         </div>
-    
-        <input type="submit" value="Edit Smartguard Server" , class="btn btn-lg btn-block">
+
+        <div class="button">
+            <input type="submit" value="Edit Server" , class="btn btn-lg btn-block">
+        </div>
     </form>
     {% else: %}
     <form method="post" class="form" action="{{url_for('add_server')}}">
         {{ form.csrf_token }}
 
         <div class="form-group">
+            {{ form.id(class_ = 'form-control') }}
+        </div>
+
+        <div class="form-group">
             <label for="server_name">Server Name</label>
             {{ form.server_name(class_ = 'form-control', placeholder='Server Name', autofocus = true) }}
         </div>
@@ -71,7 +92,9 @@
             {{ form.server_location(class_='form-control', placeholder='Server Location', autofocus = true)}}
         </div>
 
-        <input type="submit" value="Add Smartguard Server" class="btn btn-lg btn-block">
+        <div class="button">
+            <input type="submit" value="Add Server" class="btn btn-lg btn-block">
+        </div>
     </form>
     {% endif %}
 </div>

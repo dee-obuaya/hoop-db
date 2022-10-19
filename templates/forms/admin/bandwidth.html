@@ -1,61 +1,80 @@
+{% if current_user.privileges != 'Admin' %}
 {% extends 'layouts/base.html' %}
+{% else %}
+{% extends 'layouts/adminbase.html' %}
+{% endif %}
 
-{% block title %}HOOP | Admin{% endblock %}
+{% block title %}HOOP | Bandwidth Plan Form{% endblock %}
 
 {% block header %}
-{% if is_edit %} 
+{% if is_edit %}
 <h2 class="form-heading">Edit Bandwidth
+{% if (current_user.privileges != 'Admin') %}
     <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
-</h2>
+    {% else %}
+    <a href="{{ url_for('admin_index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+    {% endif %}</h2>
 {% elif is_upload: %}
 <h2 class="form-heading">Upload CSV
+{% if (current_user.privileges != 'Admin') %}
     <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
-</h2>
+    {% else %}
+    <a href="{{ url_for('admin_index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+    {% endif %}</h2>
 {% else: %}
 <h2 class="form-heading">Add New Bandwidth
+{% if (current_user.privileges != 'Admin') %}
     <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
-</h2>
-{% endif %} 
+    {% else %}
+    <a href="{{ url_for('admin_index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+    {% endif %}</h2>
+{% endif %}
 {% endblock %}
 
 {% block content %}
 
 <div class="form-wrapper">
     {% if is_upload: %}
-    <form method="post" class="form" enctype="multipart/form-data" action="{{ url_for('upload_bandwidths_csv') }}">
+    <form method="post" class="form" enctype="multipart/form-data" action="{{ url_for('upload_bandwidth_plans_csv') }}">
         {{ form.csrf_token }}
-    
+
         <div class="form-group">
             <label for="file">Choose File</label>
             {{ form.file(class_ = 'form-control')}}
         </div>
-    
-        <input class="btn btn-lg btn-block" type="submit" value="UPLOAD">
+
+        
+        <div class="button">
+            <input class="btn btn-lg btn-block" type="submit" value="UPLOAD">
+        </div>
     </form>
-    {% elif is_edit %} 
-    <form method="post" action="{{ url_for('update_bandwidth', bandwidth_id=form.id.data) }}" class="form">
+    {% elif is_edit %}
+    <form method="post" action="{{ url_for('update_bandwidth_plan', bandwidth_name=form.bandwidth_name.data) }}" class="form">
         {{ form.csrf_token }}
-    
+
         <div class="form-group">
             <label for="bandwidth_name">Bandwidth Name</label>
             {{ form.bandwidth_name(class_='form-control', placeholder='Bandwidth Name', autofocus=true)}}
         </div>
-        
-        <input type="submit" class="btn btn-lg btn-block" value="Edit Bandwidth">
+
+        <div class="button">
+            <input type="submit" class="btn btn-lg btn-block" value="Edit Bandwidth">
+        </div>
     </form>
     {% else: %}
-    <form method="post" action="{{ url_for('add_bandwidth') }}" class="form">
+    <form method="post" action="{{ url_for('add_bandwidth_plan') }}" class="form">
         {{ form.csrf_token }}
-        
+
         <div class="form-group">
             <label for="bandwidth_name">Bandwidth Name</label>
             {{ form.bandwidth_name(class_='form-control', placeholder='Bandwidth Name', autofocus=true)}}
         </div>
-        
-        <input type="submit" class="btn btn-lg btn-block" value="Add Bandwidth">
+
+        <div class="button">
+            <input type="submit" class="btn btn-lg btn-block" value="Add Bandwidth">
+        </div>
     </form>
-    
+
     {% endif %}
 </div>
-
 {% endblock %}

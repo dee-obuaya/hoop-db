@@ -1,4 +1,8 @@
+{% if current_user.privileges != 'Admin' %} 
 {% extends 'layouts/base.html' %}
+{% else %} 
+{% extends 'layouts/adminbase.html' %} 
+{% endif %} 
 
 {% block title %}HOOP{% endblock %}
 

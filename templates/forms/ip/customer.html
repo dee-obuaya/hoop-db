@@ -1,0 +1,538 @@
+{% if current_user.privileges != 'Admin' %}
+{% extends 'layouts/base.html' %}
+{% else %}
+{% extends 'layouts/adminbase.html' %}
+{% endif %}
+
+{% block title %}HOOP | Customer Form{% endblock %}
+
+{% block header %}
+{% if is_edit: %}
+<h2 class="form-heading">Edit Customer
+{% if (current_user.privileges != 'Admin') %}
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+    {% else %}
+    <a href="{{ url_for('admin_index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+    {% endif %}</h2>
+{% elif is_upload: %}
+<h2 class="form-heading">Upload Customers CSV
+{% if (current_user.privileges != 'Admin') %}
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+    {% else %}
+    <a href="{{ url_for('admin_index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+    {% endif %}</h2>
+{% else: %}
+<h2 class="form-heading">Add New Customer
+{% if (current_user.privileges != 'Admin') %}
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+    {% else %}
+    <a href="{{ url_for('admin_index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+    {% endif %}</h2>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="form-wrapper">
+    {% if is_upload: %}
+    <form method="post" class="form" enctype="multipart/form-data" action="{{ url_for('upload_customers_csv') }}">
+        {{ form.csrf_token }}
+
+        <div class="form-group">
+            <label for="file">Choose File</label>
+            {{ form.file(class_ = 'form-control', )}}
+        </div>
+
+        <div class="button">
+            <input class="btn btn-lg btn-block" type="submit" value="UPLOAD">
+        </div>
+    </form>
+    {% elif is_edit %}
+    <form method="post" class="form" action="{{url_for('update_customer', customer_code=form.customer_code.data) }}">
+        {{ form.csrf_token }}
+
+        <div class="sub-entry">
+            <div>
+                <h3>Customer Details</h3>
+                <div class="form-group">
+                    <label for="customer_name">Customer Name</label>
+                    {{ form.customer_name(class_ = 'form-control', autofocus = true) }}
+                </div>
+
+                <div class="form-group">
+                    <label for="customer_code">Customer Code</label>
+                    {{ form.customer_code(class_ = 'form-control', autofocus = true, disabled = true) }}
+                </div>
+
+                <div class="form-group">
+                    <label for="customer_status">Status</label>
+                    {{ form.customer_status(class_ = 'form-control', autofocus = true) }}
+                </div>
+
+                <div class="form-group">
+                    <label for="customer_location">Location</label>
+                    {{ form.customer_location(class_ = 'form-control', autofocus = true) }}
+                </div>
+
+                <div class="form-group">
+                    <label for="customer_partner">Partner</label>
+                    {{ form.customer_partner(class_ = 'form-control', autofocus = true) }}
+                </div>
+
+                <div class="form-group">
+                    <label for="customer_service_type">Service Type</label>
+                    {{ form.customer_service_type(class_ = 'form-control', autofocus = true) }}
+                </div>
+
+                <div class="form-group">
+                    <label for="customer_service_plan">Service Plan</label>
+                    {{ form.customer_service_plan(class_ = 'form-control', autofocus = true) }}
+                </div>
+
+                <div class="form-group">
+                    <label for="customer_bandwidth_plan">Bandwidth Plan</label>
+                    {{ form.customer_bandwidth_plan(class_ = 'form-control', autofocus = true) }}
+                </div>
+
+                <div class="form-group">
+                    <label for="customer_contact_person">Contact Person</label>
+                    {{ form.customer_contact_person(class_ = 'form-control', autofocus = true) }}
+                </div>
+
+                <div class="form-group">
+                    <label for="customer_phone_number">Phone Number</label>
+                    {{ form.customer_phone_number(class_ = 'form-control', autofocus = true) }}
+                </div>
+
+                <div class="form-group">
+                    <label for="customer_email">Email</label>
+                    {{ form.customer_email(class_ = 'form-control', autofocus = true) }}
+                </div>
+
+                <div class="form-group">
+                    <label for="customer_physical_address">Physical Address</label>
+                    {{ form.customer_physical_address(class_ = 'form-control', autofocus = true) }}
+                </div>
+            </div>
+
+            <div>
+                <h3>IP Details</h3>
+
+                <div class="form-group">
+                    <label for="customer_subnet">Subnet</label>
+                    {{ form.customer_subnet(class_ = 'form-control', autofocus = true) }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="customer_mu_ip">MU IP</label>
+                    {{ form.customer_mu_ip(class_ = 'form-control', autofocus = true) }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="customer_su_ip">SU IP</label>
+                    {{ form.customer_su_ip(class_ = 'form-control', autofocus = true) }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="customer_provider_edge_router">Provider Edge Router</label>
+                    {{ form.customer_provider_edge_router(class_ = 'form-control', autofocus = true) }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="customer_wan_ip">WAN IP</label>
+                    {{ form.customer_wan_ip(class_ = 'form-control', autofocus = true) }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="customer_wan_subnet">WAN Subnet</label>
+                    {{ form.customer_wan_subnet(class_ = 'form-control', autofocus = true) }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="customer_wan_gateway">WAN Gateway</label>
+                    {{ form.customer_wan_gateway(class_ = 'form-control', autofocus = true) }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="customer_wan_routing_protocol">WAN Routing Protocol</label>
+                    {{ form.customer_wan_routing_protocol(class_ = 'form-control', autofocus = true) }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="customer_ip">Customer IP</label>
+                    {{ form.customer_ip(class_ = 'form-control', autofocus = true) }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="customer_subnet_mask">Subnet Mask</label>
+                    {{ form.customer_subnet_mask(class_ = 'form-control', autofocus = true) }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="customer_gateway">Gateway</label>
+                    {{ form.customer_gateway(class_ = 'form-control', autofocus = true) }}
+                </div>
+            </div>            
+        </div>
+
+        <div class="sub-entry">
+            <div>
+                <h3>Link Details</h3>
+                <div class="form-group">
+                    <label for="customer_server">Smartguard Server</label>
+                    {{ form.customer_server(class_ = 'form-control', autofocus = true) }}
+                </div>
+            
+                <div class="form-group">
+                    <label for="customer_conn_type">Connection</label>
+                    {{ form.customer_conn_type(class_ = 'form-control', autofocus = true) }}
+                </div>
+            
+                <div class="form-group">
+                    <label for="customer_basestation_id">Basestation ID</label>
+                    {{ form.customer_basestation_id(class_ = 'form-control', autofocus = true) }}
+                </div>
+            
+                <div class="form-group">
+                    <label for="customer_basestation_location">Basestation Location</label>
+                    {{ form.customer_basestation_location(class_ = 'form-control', autofocus = true) }}
+                </div>
+            
+                <div class="form-group">
+                    <label for="customer_sector">Sector</label>
+                    {{ form.customer_sector(class_ = 'form-control', autofocus = true) }}
+                </div>
+            
+                <div class="form-group">
+                    <label for="customer_switch">Switch</label>
+                    {{ form.customer_switch(class_ = 'form-control', autofocus = true) }}
+                </div>
+            
+                <div class="form-group">
+                    <label for="customer_management_vlan">Management Vlan</label>
+                    {{ form.customer_management_vlan(class_ = 'form-control', autofocus = true) }}
+                </div>
+            
+                <div class="form-group">
+                    <label for="customer_traffic_vlan">Traffic Vlan</label>
+                    {{ form.customer_traffic_vlan(class_ = 'form-control', autofocus = true) }}
+                </div>
+            
+                <div class="form-group">
+                    <label for="customer_ssid">Link SSID</label>
+                    {{ form.customer_ssid(class_ = 'form-control', autofocus = true) }}
+                </div>
+            
+                <div class="form-group">
+                    <label for="customer_channel_width">Channel Width</label>
+                    {{ form.customer_channel_width(class_ = 'form-control', autofocus = true) }}
+                </div>
+            
+                <div class="form-group">
+                    <label for="customer_frequency">Frequency</label>
+                    {{ form.customer_frequency(class_ = 'form-control', autofocus = true) }}
+                </div>
+            
+                <div class="form-group">
+                    <label for="customer_mu_mac_id">MU Mac ID</label>
+                    {{ form.customer_mu_mac_id(class_ = 'form-control', autofocus = true) }}
+                </div>
+            
+                <div class="form-group">
+                    <label for="customer_su_mac_id">SU Mac ID</label>
+                    {{ form.customer_su_mac_id(class_ = 'form-control', autofocus = true) }}
+                </div>
+            
+                <div class="form-group">
+                    <label for="customer_rssi_ccq_airmax">RSSI, CCQ, Airmax</label>
+                    {{ form.customer_rssi_ccq_airmax(class_ = 'form-control', autofocus = true) }}
+                </div>
+            
+                <div class="form-group">
+                    <label for="customer_radio_type">Radio Type</label>
+                    {{ form.customer_radio_type(class_ = 'form-control', autofocus = true) }}
+                </div>
+            
+                <div class="form-group">
+                    <label for="customer_cpe">CPE</label>
+                    {{ form.customer_cpe(class_ = 'form-control', autofocus = true) }}
+                </div>
+            
+                <div class="form-group">
+                    <label for="customer_wifi_ssid">WiFI SSID</label>
+                    {{ form.customer_wifi_ssid(class_ = 'form-control', autofocus = true) }}
+                </div>
+            
+                <div class="form-group">
+                    <label for="customer_wifi_password">WiFi Password</label>
+                    {{ form.customer_wifi_password(class_ = 'form-control', autofocus = true) }}
+                </div>
+            
+                <div class="form-group">
+                    <label for="customer_installation_date">Installation Date</label>
+                    {{ form.customer_installation_date(class_ = 'form-control', autofocus = true) }}
+                </div>
+            
+                <div class="form-group">
+                    <label for="customer_activation_date">Activation Date</label>
+                    {{ form.customer_activation_date(class_ = 'form-control', autofocus = true) }}
+                </div>
+            
+                <div class="form-group">
+                    <label for="customer_installation_engineer">Installation Engineer</label>
+                    {{ form.customer_installation_engineer(class_ = 'form-control', autofocus = true) }}
+                </div>
+            </div>
+        </div>
+
+        <div class="button">
+            <input type="submit" value="edit customer " class="btn btn-lg btn-block">
+        </div>
+
+    </form>
+    {% else: %}
+    <form method="post" class="form" action="{{url_for('add_customer') }}">
+        {{ form.csrf_token }}
+
+        <div class="sub-entry">
+            <div>
+                <h3>Customer Details</h3>
+                <div class="form-group">
+                    <label for="customer_name">Customer Name</label>
+                    {{ form.customer_name(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_code">Customer Code</label>
+                    {{ form.customer_code(class_ = 'form-control', autofocus = true, disabled = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_status">Status</label>
+                    {{ form.customer_status(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_location">Location</label>
+                    {{ form.customer_location(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_partner">Partner</label>
+                    {{ form.customer_partner(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_service_type">Service Type</label>
+                    {{ form.customer_service_type(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_service_plan">Service Plan</label>
+                    {{ form.customer_service_plan(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_bandwidth_plan">Bandwidth Plan</label>
+                    {{ form.customer_bandwidth_plan(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_contact_person">Contact Person</label>
+                    {{ form.customer_contact_person(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_phone_number">Phone Number</label>
+                    {{ form.customer_phone_number(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_email">Email</label>
+                    {{ form.customer_email(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_physical_address">Physical Address</label>
+                    {{ form.customer_physical_address(class_ = 'form-control', autofocus = true) }}
+                </div>
+            </div>
+        
+            <div>
+                <h3>IP Details</h3>
+        
+                <div class="form-group">
+                    <label for="customer_subnet">Subnet</label>
+                    {{ form.customer_subnet(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_mu_ip">MU IP</label>
+                    {{ form.customer_mu_ip(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_su_ip">SU IP</label>
+                    {{ form.customer_su_ip(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_provider_edge_router">Provider Edge Router</label>
+                    {{ form.customer_provider_edge_router(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_wan_ip">WAN IP</label>
+                    {{ form.customer_wan_ip(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_wan_subnet">WAN Subnet</label>
+                    {{ form.customer_wan_subnet(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_wan_gateway">WAN Gateway</label>
+                    {{ form.customer_wan_gateway(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_wan_routing_protocol">WAN Routing Protocol</label>
+                    {{ form.customer_wan_routing_protocol(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_ip">Customer IP</label>
+                    {{ form.customer_ip(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_subnet_mask">Subnet Mask</label>
+                    {{ form.customer_subnet_mask(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_gateway">Gateway</label>
+                    {{ form.customer_gateway(class_ = 'form-control', autofocus = true) }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="sub-entry">
+            <div>
+                <h3>Link Details</h3>
+                <div class="form-group">
+                    <label for="customer_server">Smartguard Server</label>
+                    {{ form.customer_server(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_conn_type">Connection</label>
+                    {{ form.customer_conn_type(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_basestation_id">Basestation ID</label>
+                    {{ form.customer_basestation_id(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_basestation_location">Basestation Location</label>
+                    {{ form.customer_basestation_location(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_sector">Sector</label>
+                    {{ form.customer_sector(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_switch">Switch</label>
+                    {{ form.customer_switch(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_management_vlan">Management Vlan</label>
+                    {{ form.customer_management_vlan(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_traffic_vlan">Traffic Vlan</label>
+                    {{ form.customer_traffic_vlan(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_ssid">Link SSID</label>
+                    {{ form.customer_ssid(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_channel_width">Channel Width</label>
+                    {{ form.customer_channel_width(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_frequency">Frequency</label>
+                    {{ form.customer_frequency(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_mu_mac_id">MU Mac ID</label>
+                    {{ form.customer_mu_mac_id(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_su_mac_id">SU Mac ID</label>
+                    {{ form.customer_su_mac_id(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_rssi_ccq_airmax">RSSI, CCQ, Airmax</label>
+                    {{ form.customer_rssi_ccq_airmax(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_radio_type">Radio Type</label>
+                    {{ form.customer_radio_type(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_cpe">CPE</label>
+                    {{ form.customer_cpe(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_wifi_ssid">WiFI SSID</label>
+                    {{ form.customer_wifi_ssid(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_wifi_password">WiFi Password</label>
+                    {{ form.customer_wifi_password(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_installation_date">Installation Date</label>
+                    {{ form.customer_installation_date(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_activation_date">Activation Date</label>
+                    {{ form.customer_activation_date(class_ = 'form-control', autofocus = true) }}
+                </div>
+        
+                <div class="form-group">
+                    <label for="customer_installation_engineer">Installation Engineer</label>
+                    {{ form.customer_installation_engineer(class_ = 'form-control', autofocus = true) }}
+                </div>
+            </div>
+        </div>
+
+        <div class="button">
+            <input type="submit" value="add customer " class="btn btn-lg btn-block">
+        </div>
+    </form>
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
+from datetime import date, datetime
 
 db = SQLAlchemy()
 
@@ -33,7 +34,7 @@ class User(UserMixin, db.Model):
         return {
             'id': self.id,
             'username': self.username,
-            'password': self.username,
+            'password': self.password,
             'department': self.department,
             'privileges': self.privileges
         }
@@ -42,7 +43,7 @@ class User(UserMixin, db.Model):
         return {
             'id': self.id,
             'username': self.username,
-            'password': self.username,
+            'password': self.password,
             'department': self.department,
             'privileges': self.privileges
         }
@@ -406,7 +407,7 @@ class CPE(db.Model):
     def format(self):
         return {
             'id': self.id,
-            'cpe_name': self.bandwidth_name,
+            'cpe_name': self.cpe_name,
         }
 
     def to_dict(self):
@@ -456,9 +457,9 @@ class Customer(db.Model):
     customer_bandwidth_plan = db.Column(db.String())
     customer_wifi_ssid = db.Column(db.String())
     customer_wifi_password = db.Column(db.LargeBinary())
-    customer_installation_date = db.Column(db.Date)
-    customer_activation_date = db.Column(db.Date)
-    customer_installation_enginner = db.Column(db.String())
+    customer_installation_date = db.Column(db.Date, nullable=False, default=date.today())
+    customer_activation_date = db.Column(db.Date, nullable=False, default=date.today())
+    customer_installation_engineer = db.Column(db.String())
     customer_contact_person = db.Column(db.String())
     customer_phone_number = db.Column(db.String())
     customer_email = db.Column(db.String())
@@ -473,7 +474,7 @@ class Customer(db.Model):
     changeimplementationtracker = db.relationship(
         'ChangeImplementationTracker', backref='changeimplementationtrackers')
 
-    def __init__(self, customer_name, customer_code, customer_status, customer_server, customer_conn_type, customer_location, customer_partner, customer_basestation_location, customer_basestation_id, customer_sector, customer_switch, customer_management_vlan, customer_traffic_vlan, customer_subnet, customer_mu_ip, customer_su_ip, customer_ssid, customer_channel_width, customer_frequency, customer_mu_mac_id, customer_su_mac_id, customer_rssi_ccq_airmax, customer_radio_type, customer_cpe, customer_provider_edge_router, customer_wan_ip, customer_wan_subnet, customer_wan_gateway, customer_wan_routing_protocol, customer_ip, customer_subnet_mask, customer_gateway, customer_service_type, customer_service_plan, customer_bandwidth_plan, customer_wifi_ssid, customer_wifi_password, customer_installation_date, customer_activation_date, customer_installation_enginner, customer_contact_person, customer_phone_number, customer_email, customer_physical_address):
+    def __init__(self, customer_name, customer_code, customer_status, customer_server, customer_conn_type, customer_location, customer_partner, customer_basestation_location, customer_basestation_id, customer_sector, customer_switch, customer_management_vlan, customer_traffic_vlan, customer_subnet, customer_mu_ip, customer_su_ip, customer_ssid, customer_channel_width, customer_frequency, customer_mu_mac_id, customer_su_mac_id, customer_rssi_ccq_airmax, customer_radio_type, customer_cpe, customer_provider_edge_router, customer_wan_ip, customer_wan_subnet, customer_wan_gateway, customer_wan_routing_protocol, customer_ip, customer_subnet_mask, customer_gateway, customer_service_type, customer_service_plan, customer_bandwidth_plan, customer_wifi_ssid, customer_wifi_password, customer_installation_date, customer_activation_date, customer_installation_engineer, customer_contact_person, customer_phone_number, customer_email, customer_physical_address):
         self.customer_name = customer_name
         self.customer_code = customer_code
         self.customer_status = customer_status
@@ -513,7 +514,7 @@ class Customer(db.Model):
         self.customer_wifi_password = customer_wifi_password
         self.customer_installation_date = customer_installation_date
         self.customer_activation_date = customer_activation_date
-        self.customer_installation_enginner = customer_installation_enginner
+        self.customer_installation_engineer = customer_installation_engineer
         self.customer_contact_person = customer_contact_person
         self.customer_phone_number = customer_phone_number
         self.customer_email = customer_email
@@ -572,7 +573,7 @@ class Customer(db.Model):
             'customer_wifi_password': self.customer_wifi_password,
             'customer_installation_date': self.customer_installation_date,
             'customer_activation_date': self.customer_activation_date,
-            'customer_installation_enginner': self.customer_installation_enginner,
+            'customer_installation_enginner': self.customer_installation_engineer,
             'customer_contact_person': self.customer_contact_person,
             'customer_phone_number': self.customer_phone_number,
             'customer_email': self.customer_email,
@@ -621,7 +622,7 @@ class Customer(db.Model):
             'customer_wifi_password': self.customer_wifi_password,
             'customer_installation_date': self.customer_installation_date,
             'customer_activation_date': self.customer_activation_date,
-            'customer_installation_enginner': self.customer_installation_enginner,
+            'customer_installation_enginner': self.customer_installation_engineer,
             'customer_contact_person': self.customer_contact_person,
             'customer_phone_number': self.customer_phone_number,
             'customer_email': self.customer_email,
@@ -735,8 +736,9 @@ class LinkActivationTracker(db.Model):
         db.String(), db.ForeignKey('customers.customer_code'))
     customer_basestation_id = db.Column(db.String())
     customer_service_desc = db.Column(db.String())
-    customer_request_date = db.Column(db.Date)
-    customer_link_completion_date = db.Column(db.Date)
+    customer_request_date = db.Column(db.Date, default=date.today())
+    customer_link_completion_date = db.Column(
+        db.Date, default=date.today())
     customer_implemented_by = db.Column(db.String())
 
     def __init__(self, customer_name, customer_code, customer_basestation_id, customer_service_desc, customer_request_date, customer_link_completion_date, customer_implemented_by):
@@ -795,8 +797,8 @@ class ChangeImplementationTracker(db.Model):
     customer_change_type = db.Column(db.String())
     customer_instructed_by = db.Column(db.String())
     customer_approved_by = db.Column(db.String())
-    customer_request_date = db.Column(db.Date)
-    customer_implementation_date_and_time = db.Column(db.DateTime)
+    customer_request_date = db.Column(db.Date, default=date.today())
+    customer_implementation_date_and_time = db.Column(db.DateTime, default=datetime.today())
     customer_implemented_by = db.Column(db.String())
     customer_status = db.Column(db.String())
 

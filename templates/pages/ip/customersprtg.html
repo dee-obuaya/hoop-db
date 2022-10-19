@@ -4,10 +4,10 @@
 {% extends 'layouts/adminbase.html' %}
 {% endif %}
 
-{% block title %}HOOP | Change Implementation Trackers{% endblock %}
+{% block title %}HOOP | Customers PRTG{% endblock %}
 
 {% block header %}
-<h2>Change Implementation Trackers
+<h2>Customers PRTG
     {% if (current_user.privileges != 'Admin') %}
     <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
     {% else %}
@@ -30,23 +30,16 @@
     new gridjs.Grid({
         columns: [
             { id: 's_n', name: '', width: '20px' },
-            { id: 'customer_name', name: 'Name', width: '180px' },
-            { id: 'customer_code', name: 'Code', width: '180px' },
-            { id: 'customer_change_id', name: 'Change ID', width: '180px', formatter: (cell) => gridjs.html(`<a href='/change-implementation-trackers/${cell}/edit'}}'>${cell}</a>`) },
-            { id: 'customer_change_desc', name: 'Change Description', width: '180px' },
-            { id: 'customer_change_type', name: 'Change Type', width: '180px' },
-            { id: 'customer_instructed_by', name: 'Instructed By', width: '180px' },
-            { id: 'customer_approved_by', name: 'Approved By', width: '180px' },
-            { id: 'customer_request_date', name: 'Request Date', width: '180px' },
-            { id: 'customer_implementation_date_and_time', name: 'Implementation Date and Time', width: '180px' },
-            { id: 'customer_implemented_by', name: 'Implemented By', width: '180px' },
-            { id: 'customer_status', name: 'Status', width: '180px' },
-            { id: 'del', name: '', width: '80px', formatter: (_, row) => gridjs.html(`<a href='/change-implementation-trackers/${row.cells[3].data}/delete'}}' onclick="return confirm('Are you sure you want to delete this entry?');"><i class="fa-solid fa-trash"></i></a>`), width: '50px' }
+            { id: 'customer_name', name: 'Name', width: '100px' },
+            { id: 'customer_code', name: 'Code', width: '100px', formatter: (cell) => gridjs.html(`<a href='/customers-prtg/${cell}/edit'}}'>${cell}</a>`) },
+            { id: 'customer_username', name: 'Customer Username', width: '100px' },
+            { id: 'customer_password', name: 'Customer Password', width: '100px' },
+            { id: 'del', name: '', width: '80px', formatter: (_, row) => gridjs.html(`<a href='/customers-prtg/${row.cells[2].data}/delete'}}' onclick="return confirm('Are you sure you want to delete this customer?');"><i class="fa-solid fa-trash"></i></a>`), width: '50px' }
         ],
         resizable: true,
         height: '50%',
         server: {
-            url: '/change-implementation-trackers/data',
+            url: '/customers-prtg/data',
             then: results => results.data,
             total: results => results.total,
         },

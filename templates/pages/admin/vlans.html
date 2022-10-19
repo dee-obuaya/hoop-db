@@ -1,76 +1,74 @@
+{% if current_user.privileges != 'Admin' %}
 {% extends 'layouts/base.html' %}
-
+{% else %}
+{% extends 'layouts/adminbase.html' %}
+{% endif %}
 {% block title %}HOOP | Vlans{% endblock %}
 
 {% block header %}
 <h2>Vlans
+    {% if (current_user.privileges != 'Admin') %}
     <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+    {% else %}
+    <a href="{{ url_for('admin_index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+    {% endif %}
 </h2>
 {% endblock %}
 
 {% block content %}
-
-<form class="search" method="post" action="/search/vlans">
-    <input class="form-control" type="text" id="search_box" placeholder="Find vlan" aria-label="Search">
-</form>
-
-{% for message in get_flashed_messages() %}
-<div class=flash>
-    {{ message }}
-</div>
-{% endfor %}
-
-<table class="table table-hover table-bordered">
-
-    <thead>
-        <tr>
-            <th>S/N</th>
-            <th>Vlan ID</th>
-            <th>Customer Assigned</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody class="table-group-divider" id="search">
-        {% for vlan in response: %}
-        <tr>
-            <td>{{ response.index(vlan) + 1 }}</td>
-            <td>{{ vlan.vlan_id }}</td>
-            <td>{{ vlan.customer_assigned }}</td>
-            <td><a href="{{ url_for('delete_vlan', vlan_id=vlan.vlan_id) }}" onclick="return confirm('Are you sure you want to delete this vlan?');">❌</a></td>
-        </tr>
-        {% endfor %}
-    </tbody>
-
-</table>
+<div id="table"></div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-    $(document).ready(function () {
-        $("#search_box").on("input", function (e) {
-            search_text = $("#search_box").val();
-            $("#search").empty();
-            // console.log(text)
-            $.ajax({
-                method: "post",
-                url: "/search/vlans",
-                data: { text: search_text },
-                success: function (res) {
-                    console.log(res);
-                    var data;
-                    $.each(res, function (index, value) {
-                        data += "<tr>";
-                        data += "<td>" + (index + 1) + "</td>";
-                        data += "<td><a href='{{url_for('update_partner', partner_id=partner_id)}}'>" + value.vlan_id + "</a></td>";
-                        data += "<td>" + value.customer_assigned + "</td>";
-                        data += '<td><a href="{{ url_for("delete_vlan", vlan_id=vlan_id) }}" onclick="return confirm("Are you sure you want to delete this vlan?");">❌</a></td>';
-                        data += "</tr>";
-                    });
-                    console.log(data)
-                    $("#search").html(data);
-                }
-            })
-        });
-    })
+    const updateUrl = (prev, query) => {
+        return prev + (prev.indexOf('?') >= 0 ? '&' : '?') + new URLSearchParams(query).toString();
+    };
+
+    new gridjs.Grid({
+        columns: [
+            { id: 's_n', name: '', width:'20px' },
+            { id: 'vlan_id', name: 'Vlan ID', formatter: (cell) => gridjs.html(`<a href='/vlans/${cell}/edit'}}'>${cell}</a>`) },
+            { id: 'customer_assigned', name: 'Customer Assigned' },
+            { id: 'del', name: '', width:'80px', formatter: (_, row) => gridjs.html(`<a href='/vlans/${row.cells[1].data}/delete'}}' onclick="return confirm('Are you sure you want to delete this vlan?');"><i class="fa-solid fa-trash"></i></a>`) }
+        ],
+        resizable: true,
+        height: '50%',
+        server: {
+            url: '/vlans/data',
+            then: results => results.data,
+            total: results => results.total,
+        },
+        search: {
+            enabled: true,
+            server: {
+                url: (prev, search) => {
+                    return updateUrl(prev, { search });
+                },
+            },
+        },
+        pagination: {
+            enabled: true,
+            server: {
+                url: (prev, page, limit) => {
+                    return updateUrl(prev, { start: page * limit, length: limit });
+                },
+            },
+        },
+        language: {
+            'search': {
+                'placeholder': '🔍 Search...'
+            },
+            'pagination': {
+                'previous': 'Previous',
+                'next': 'Next',
+                'showing': 'Displaying',
+                'results': () => 'Records'
+            }
+        },
+        className: {
+            table: 'table-responsive'
+        }
+    }).render(document.getElementById('table'));
 </script>
 {% endblock %}

@@ -1,20 +1,32 @@
+{% if current_user.privileges != 'Admin' %}
+{% extends 'layouts/base.html' %}
+{% else %}
 {% extends 'layouts/adminbase.html' %}
-
-{% block title %}HOOP | Admin{% endblock %}
+{% endif %}
+{% block title %}HOOP | Partner Form{% endblock %}
 
 {% block header %}
 {% if is_edit: %}
 <h2 class="form-heading">Edit Partner
+{% if (current_user.privileges != 'Admin') %}
     <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
-</h2>
+    {% else %}
+    <a href="{{ url_for('admin_index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+    {% endif %}</h2>
 {% elif is_upload: %}
 <h2 class="form-heading">Edit Partner
+{% if (current_user.privileges != 'Admin') %}
     <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
-</h2>
+    {% else %}
+    <a href="{{ url_for('admin_index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+    {% endif %}</h2>
 {% else: %}
 <h2 class="form-heading">Add New Partner
+{% if (current_user.privileges != 'Admin') %}
     <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
-</h2>
+    {% else %}
+    <a href="{{ url_for('admin_index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+    {% endif %}</h2>
 {% endif %}
 {% endblock %}
 
@@ -29,7 +41,9 @@
             {{ form.file(class_ = 'form-control', )}}
         </div>
 
-        <input class="btn btn-lg btn-block" type="submit" value="UPLOAD">
+        <div class="button">
+            <input class="btn btn-lg btn-block" type="submit" value="UPLOAD">
+        </div>
     </form>
     {% elif is_edit %}
     <form method="post" class="form" action="{{url_for('update_partner', partner_id=form.partner_id.data)}}">
@@ -55,7 +69,9 @@
             {{ form.partner_address(class_ = 'form-control', placeholder='Address', autofocus = true) }}
         </div>
 
-        <input type="submit" value="Edit Partner" class="btn btn-lg btn-block">
+        <div class="button">
+            <input type="submit" value="Edit Partner" class="btn btn-lg btn-block">
+        </div>
     </form>
     {% else: %}
     <form method="post" class="form" action="{{url_for('add_partner')}}">
@@ -88,7 +104,9 @@
             {{ form.partner_address(class_ = 'form-control', placeholder='Address', autofocus = true) }}
         </div>
 
-        <input type="submit" value="Add Partner" class="btn btn-lg btn-block">
+        <div class="button">
+            <input type="submit" value="Add Partner" class="btn btn-lg btn-block">
+        </div>
     </form>
     {% endif %}
 </div>

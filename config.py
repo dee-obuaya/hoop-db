@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 def id_generator(size=32, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
@@ -22,7 +23,8 @@ DEBUG = True
 UPLOAD_FOLDER = 'static/files'
 
 # Connect to the database
-SQLALCHEMY_DATABASE_URI = 'postgresql://{}:{}@{}/{}'.format(os.getenv('db_user'), os.getenv('db_password'), os.getenv('db_host'), os.getenv('db_name'))
+SQLALCHEMY_DATABASE_URI = '{}://{}:{}@{}/{}'.format(os.getenv('db'), os.getenv(
+    'db_user'), os.getenv('db_password'), os.getenv('db_host'), os.getenv('db_name'))
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 SQLALCHEMY_ENGINE_OPTIONS = {
     "max_overflow": 15,

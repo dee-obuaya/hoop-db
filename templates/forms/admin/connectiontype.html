@@ -1,4 +1,8 @@
+{% if current_user.privileges != 'Admin' %}
 {% extends 'layouts/base.html' %}
+{% else %}
+{% extends 'layouts/adminbase.html' %}
+{% endif %}
 
 {% block title %}HOOP | Connection Type Form{% endblock %}
 
@@ -6,16 +10,25 @@
 
 {% if is_edit: %}
 <h2 class="form-heading">Edit Connection Type
+{% if (current_user.privileges != 'Admin') %}
     <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
-</h2>
+    {% else %}
+    <a href="{{ url_for('admin_index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+    {% endif %}</h2>
 {% elif is_upload: %} 
 <h2 class="form-heading">Upload Connection Type CSV
+{% if (current_user.privileges != 'Admin') %}
     <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
-</h2>
+    {% else %}
+    <a href="{{ url_for('admin_index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+    {% endif %}</h2>
 {% else: %}
 <h2 class="form-heading">Add New Connection Type
+{% if (current_user.privileges != 'Admin') %}
     <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
-</h2>
+    {% else %}
+    <a href="{{ url_for('admin_index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+    {% endif %}</h2>
 {% endif %}
 
 {% endblock %}
@@ -23,7 +36,7 @@
 {% block content %}
 <div class="form-wrapper">
     {% if is_upload: %}
-    <form method="post" class="form" enctype="multipart/form-data" action="{{ url_for('upload_connection_types_csv') }}">
+    <form method="post" class="form" enctype="multipart/form-data" action="{{ url_for('upload_connections_csv') }}">
         {{ form.csrf_token }}
     
         <div class="form-group">
@@ -31,10 +44,12 @@
             {{ form.file(class_ = 'form-control', )}}
         </div>
     
-        <input class="btn btn-lg btn-block" type="submit" value="upload">
+        <div class="button">
+            <input class="btn btn-lg btn-block" type="submit" value="upload">
+        </div>
     </form>
     {% elif is_edit %} 
-    <form method="post" class="form" action="{{url_for('update_connection_type', conn_id=form.id.data)}}">
+    <form method="post" class="form" action="{{url_for('update_connection', conn_name=form.conn_name.data)}}">
         {{ form.csrf_token }}
     
         <div class="form-group">
@@ -47,10 +62,12 @@
             {{ form.conn_desc(class_ = 'form-control', placeholder='Connection Description', autofocus = true) }}
         </div>
         
-        <input type="submit" value="Edit Connection Type" class="btn btn-lg btn-block">
+        <div class="button">
+            <input type="submit" value="Edit Connection Type" class="btn btn-lg btn-block">
+        </div>
     </form>
     {% else: %}
-    <form method="post" class="form" action="{{url_for('add_connection_type')}}">
+    <form method="post" class="form" action="{{url_for('add_connection')}}">
         {{ form.csrf_token }}
 
         <div class="form-group">
@@ -63,7 +80,9 @@
             {{ form.conn_desc(class_ = 'form-control', placeholder='Connection Description', autofocus = true) }}
         </div>
         
-        <input type="submit" value="Add Connection Type" class="btn btn-lg btn-block">
+        <div class="button">
+            <input type="submit" value="Add Connection Type" class="btn btn-lg btn-block">
+        </div>
     </form>
     {% endif %}
 </div>

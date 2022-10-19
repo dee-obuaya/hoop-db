@@ -1,85 +1,77 @@
+{% if current_user.privileges != 'Admin' %}
 {% extends 'layouts/base.html' %}
+{% else %}
+{% extends 'layouts/adminbase.html' %}
+{% endif %}
 
 {% block title %}HOOP | Basestations{% endblock %}
 
-{% block header %} 
+{% block header %}
 <h2>Basestations
+    {% if (current_user.privileges != 'Admin') %}
     <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+    {% else %}
+    <a href="{{ url_for('admin_index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+    {% endif %}
 </h2>
-{% endblock %} 
+{% endblock %}
 
 {% block content %}
-
-<form class="search" method="post" action="/search/basestations">
-    <input class="form-control" type="text" id="search_box" placeholder="Find basestation" aria-label="Search">
-</form>
-
-{% for message in get_flashed_messages() %}
-<div class=flash>
-    {{ message }}
-</div>
-{% endfor %}
-
-<table class="table table-hover table-bordered">
-
-    <thead>
-        <tr>
-            <th>S/N</th>
-            <th>Basestation ID</th>
-            <th>Basestation Name</th>
-            <th>Basestation Address</th>
-            <th>Basestation Contact</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody class="table-group-divider" id="search">
-        {% for basestation in response: %}
-        <tr>
-            <td>{{ response.index(basestation) + 1 }}</td>
-            <td>
-                <a href="{{ url_for('update_basestation', basestation_id=basestation.basestation_id) }}">
-                    {{ basestation.basestation_id }}
-                </a>
-            </td>
-            <td>{{ basestation.basestation_name }}</td>
-            <td>{{ basestation.basestation_location }}</td>
-            <td>{{ basestation.basestation_contact }}</td>
-            <td><a href="{{ url_for('delete_basestation', basestation_id=basestation.basestation_id)}}" onclick="return confirm('Are you sure you want to delete this basestation?');">❌</a></td>
-        </tr>
-        {% endfor %}
-    </tbody>
-
-</table>
-
+<div id="table"></div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-    $(document).ready(function () {
-        $("#search_box").on("input", function (e) {
-            search_text = $("#search_box").val();
-            $("#search").empty();
-            // console.log(text)
-            $.ajax({
-                method: "post",
-                url: "/search/basestations",
-                data: { text: search_text },
-                success: function (res) {
-                    var data;
-                    $.each(res, function (index, value) {
-                        data += "<tr>";
-                        data += "<td>" + (index + 1) + "</td>";
-                        data += "<td><a href='{{url_for('update_basestation', basestation_id=basestation_id)}}'>" + value.basestation_id + "</a></td>";
-                        data += "<td>" + value.basestation_name + "</td>";
-                        data += "<td>" + value.basestation_location + "</td>";
-                        data += "<td>" + value.basestation_contact + "</td>";
-                        data += '<td><a href="{{ url_for("delete_basestation", basestation_id=basestation_id) }}" onclick="return confirm("Are you sure you want to delete this vlan?");">❌</a></td>';
-                        data += "</tr>";
-                    });
-                    $("#search").html(data);
-                }
-            })
-        });
-    })
+    const updateUrl = (prev, query) => {
+        return prev + (prev.indexOf('?') >= 0 ? '&' : '?') + new URLSearchParams(query).toString();
+    };
+
+    new gridjs.Grid({
+        columns: [
+            { id: 's_n', name: '', width:'20px' },
+            { id: 'basestation_id', name: 'Basestation ID', formatter: (cell) => gridjs.html(`<a href='/basestations/${cell}/edit'}}'>${cell}</a>`) },
+            { id: 'basestation_name', name: 'Basestation Name' },
+            { id: 'basestation_location', name: 'Basestation Location' },
+            { id: 'basestation_contact', name: 'Basestation Contact' },
+            { id: 'del', name: '', width:'80px', formatter: (_, row) => gridjs.html(`<a href='/basestations/${row.cells[1].data}/delete'}}' onclick="return confirm('Are you sure you want to delete this basestation?');"><i class="fa-solid fa-trash"></i></a>`) }
+        ],
+        resizable: true,
+        height: '50%',
+        server: {
+            url: '/basestations/data',
+            then: results => results.data,
+            total: results => results.total,
+        },
+        search: {
+            enabled: true,
+            server: {
+                url: (prev, search) => {
+                    return updateUrl(prev, { search });
+                },
+            },
+        },
+        pagination: {
+            enabled: true,
+            server: {
+                url: (prev, page, limit) => {
+                    return updateUrl(prev, { start: page * limit, length: limit });
+                },
+            },
+        },
+        language: {
+            'search': {
+                'placeholder': '🔍 Search...'
+            },
+            'pagination': {
+                'previous': 'Previous',
+                'next': 'Next',
+                'showing': 'Displaying',
+                'results': () => 'Records'
+            }
+        },
+        className: {
+            table: 'table-responsive'
+        }
+    }).render(document.getElementById('table'));
 </script>
 {% endblock %}

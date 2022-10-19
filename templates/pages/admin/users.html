@@ -4,45 +4,61 @@
 
 {% block header %}
 <h2>Users
-    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+    <a href="{{ url_for('admin_index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
 </h2>
 {% endblock %}
 
 {% block content %}
+<div id="table"></div>
+{% endblock %}
 
-{% for message in get_flashed_messages() %}
-<div class=flash>
-    {{ message }}
-</div>
-{% endfor %}
+{% block scripts %}
+<script>
+    const updateUrl = (prev, query) => {
+        return prev + (prev.indexOf('?') >= 0 ? '&' : '?') + new URLSearchParams(query).toString();
+    };
 
-<table class="table table-hover table-bordered">
-
-    <thead>
-        <tr>
-            <th>S/N</th>
-            <th>Username</th>
-            <th>Password</th>
-            <th>Role</th>
-            <th>Privileges</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody class="table-group-divider">
-        {% for user in response: %}
-        <tr>
-            <td>{{ response.index(user) + 1 }}</td>
-            <td>
-                <a href="{{ url_for('update_user', user_id=user.id) }}">{{ user.username }}</a>
-            </td>
-            <td>{{ fernet.decrypt(user.password).decode() }}</td>
-            <td>{{ user.department }}</td>
-            <td>{{ user.privileges }}</td>
-            <td><a href="{{ url_for('delete_user', user_id=user.id) }}"
-                    onclick="return confirm('Are you sure you want to delete this user?');">❌</a></td>
-        </tr>
-        {% endfor %}
-    </tbody>
-
-</table>
+    new gridjs.Grid({
+        columns: [
+            { id: 's_n', name: 'S/N' },
+            { id: 'username', name: 'Username', formatter: (cell) => gridjs.html(`<a href='/users/${cell}/edit'}}'>${cell}</a>`) },
+            { id: 'password', name: 'Password' },
+            { id: 'department', name: 'Department' },
+            { id: 'privileges', name: 'Privileges' },
+            { id: 'del', name: '', formatter: (_, row) => gridjs.html(`<a href='/users/${row.cells[1].data}/delete'}}' onclick="return confirm('Are you sure you want to delete this user?');"><i class="fa-solid fa-trash"></i></a>`) }
+        ],
+        server: {
+            url: '/users/data',
+            then: results => results.data,
+            total: results => results.total,
+        },
+        search: {
+            enabled: true,
+            server: {
+                url: (prev, search) => {
+                    return updateUrl(prev, { search });
+                },
+            },
+        },
+        pagination: {
+            enabled: true,
+            server: {
+                url: (prev, page, limit) => {
+                    return updateUrl(prev, { start: page * limit, length: limit });
+                },
+            },
+        },
+        language: {
+            'search': {
+                'placeholder': '🔍 Search...'
+            },
+            'pagination': {
+                'previous': 'Previous',
+                'next': 'Next',
+                'showing': 'Displaying',
+                'results': () => 'Records'
+            }
+        }
+    }).render(document.getElementById('table'));
+</script>
 {% endblock %}

@@ -1,139 +1,92 @@
+{% if current_user.privileges != 'Admin' %}
 {% extends 'layouts/base.html' %}
+{% else %}
+{% extends 'layouts/adminbase.html' %}
+{% endif %}
 
 {% block title %}HOOP | Link Details{% endblock %}
 
 {% block header %}
-<h2>Customers Link Details
+<h2>Link Details
     <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
 </h2>
 {% endblock %}
 
 {% block content %}
-
-<form class="search" method="post" action="">
-    <input class="form-control" type="search" id="search_box" placeholder="Find customer" aria-label="Search">
-</form>
-
-{% for message in get_flashed_messages() %}
-<div class=flash>
-    {{ message }}
-</div>
-{% endfor %}
-
-<div class="table-responsive">
-
-    <table class="table align-middle table-hover table-bordered">
-
-        <thead>
-            <tr>
-                <th>S/N</th>
-                <th>Customer Name</th>
-                <th>Customer Code</th>
-                <th>Smartguard Server</th>
-                <th>Connection Type</th>
-                <th>Connecting Basestation ID</th>
-                <th>Connecting Basestation Location</th>
-                <th>Sector</th>
-                <th>Switch/Port</th>
-                <th>Management Vlan</th>
-                <th>Traffic Vlan</th>
-                <th>Link SSIQ</th>
-                <th>Channel Width</th>
-                <th>Frequency</th>
-                <th>MU Mac ID</th>
-                <th>SU Mac ID</th>
-                <th>RSSI, CCQ, Airmax Q</th>
-                <th>Radio Type</th>
-                <th>Customer CPE</th>
-                <th>Customer WiFi SSID</th>
-                <th>Customer WiFi Password</th>
-                <th>Installation Date</th>
-                <th>Activation Date</th>
-                <th>Installation Engineer</th>
-            </tr>
-        </thead>
-        <tbody class="table-group-divider" id="search">
-            {% for customer in response: %}
-            <tr>
-                <td>{{ response.index(customer) + 1 }}</td>
-                <td>{{ customer.customer_name }}</td>
-                <td>{{ customer.customer_code }}</td>
-                <td>{{ customer.customer_server }} </td>
-                <td>{{ customer.customer_conn_type }} </td>
-                <td>{{ customer.customer_basestation_id }}</td>
-                <td>{{ customer.customer_basestation_location }}</td>
-                <td>{{ customer.customer_sector }}</td>
-                <td>{{ customer.customer_switch }}</td>
-                <td>{{ customer.customer_management_vlan }}</td>
-                <td>{{ customer.customer_traffic_vlan }}</td>
-                <td>{{ customer.customer_ssid }}</td>
-                <td>{{ customer.customer_channel_width }}</td>
-                <td>{{ customer.customer_frequency }}</td>
-                <td>{{ customer.customer_mu_mac_id }}</td>
-                <td>{{ customer.customer_su_mac_id }}</td>
-                <td>{{ customer.customer_rssi_ccq_airmax }}</td>
-                <td>{{ customer.customer_radio_type }}</td>
-                <td>{{ customer.customer_cpe }}</td>
-                <td>{{ customer.customer_wifi_ssid }}</td>
-                <td>{{ fernet.decrypt(customer.customer_wifi_password).decode() }}</td>
-                <td>{{ customer.customer_installation_date }}</td>
-                <td>{{ customer.customer_activation_date }}</td>
-                <td>{{ customer.customer_installation_enginner }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-
-    </table>
-
-</div>
-
+<div id="table"></div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-    $(document).ready(function () {
-        $("#search_box").on("input", function (e) {
-            search_text = $("#search_box").val();
-            $("#search").empty();
-            // console.log(text)
-            $.ajax({
-                method: "post",
-                url: "/search/link-details",
-                data: { text: search_text },
-                success: function (res) {
-                    var data;
-                    $.each(res, function (index, value) {
-                        data += "<tr>";
-                        data += "<td>" + (index + 1) + "</td>";
-                        data += "<td>" + value.customer_name + "</td>";
-                        data += "<td>" + value.customer_code + "</td>";
-                        data += "<td>" + value.customer_server + "</td>";
-                        data += "<td>" + value.customer_conn_type + "</td>";
-                        data += "<td>" + value.customer_basestation_id + "</td>";
-                        data += "<td>" + value.customer_basestation_location + "</td>";
-                        data += "<td>" + value.customer_sector + "</td>";
-                        data += "<td>" + value.customer_switch + "</td>";
-                        data += "<td>" + value.customer_management_vlan + "</td>";
-                        data += "<td>" + value.customer_traffic_vlan + "</td>";
-                        data += "<td>" + value.customer_ssid + "</td>";
-                        data += "<td>" + value.customer_channel_width + "</td>";
-                        data += "<td>" + value.customer_frequency + "</td>";
-                        data += "<td>" + value.customer_mu_mac_id + "</td>";
-                        data += "<td>" + value.customer_su_mac_id + "</td>";
-                        data += "<td>" + value.customer_rssi_ccq_airmax + "</td>";
-                        data += "<td>" + value.customer_radio_type + "</td>";
-                        data += "<td>" + value.customer_cpe + "</td>";
-                        data += "<td>" + value.customer_wifi_ssid + "</td>";
-                        data += "<td>" + value.customer_wifi_password + "</td>";
-                        data += "<td>" + value.customer_installation_date + "</td>";
-                        data += "<td>" + value.customer_activation_date + "</td>";
-                        data += "<td>" + value.customer_installation_engineer + "</td>";
-                        data += "</tr>";
-                    });
-                    $("#search").html(data);
-                }
-            })
-        });
-    })
+    const updateUrl = (prev, query) => {
+        return prev + (prev.indexOf('?') >= 0 ? '&' : '?') + new URLSearchParams(query).toString();
+    };
+
+    new gridjs.Grid({
+        columns: [
+            { id: 's_n', name: '', width: '20px' },
+            { id: 'customer_name', name: 'Customer Name', width: '180px' },
+            { id: 'customer_code', name: 'Customer Code', width: '180px' },
+            { id: 'customer_server', name: 'Smartguard Server', width: '180px' },
+            { id: 'customer_conn_type', name: 'Connection', width: '180px' },
+            { id: 'customer_basestation_id', name: 'Basestation ID', width: '180px' },
+            { id: 'customer_basestation_location', name: 'Basestation Location', width: '180px' },
+            { id: 'customer_sector', name: 'Sector', width: '180px' },
+            { id: 'customer_switch', name: 'Switch', width: '180px' },
+            { id: 'customer_management_vlan', name: 'Management Vlan', width: '180px' },
+            { id: 'customer_traffic_vlan', name: 'Traffic Vlan', width: '180px' },
+            { id: 'customer_ssid', name: 'Link SSID', width: '180px' },
+            { id: 'customer_channel_width', name: 'Channel Width', width: '180px' },
+            { id: 'customer_frequency', name: 'Frequency', width: '180px' },
+            { id: 'customer_mu_mac_id', name: 'MU Mac ID', width: '180px' },
+            { id: 'customer_su_mac_id', name: 'SU Mac ID', width: '180px' },
+            { id: 'customer_rssi_ccq_airmax', name: 'RSSI, CCQ, Airmax', width: '180px' },
+            { id: 'customer_radio_type', name: 'Radio Type', width: '180px' },
+            { id: 'customer_cpe', name: 'CPE', width: '180px' },
+            { id: 'customer_wifi_ssid', name: 'Wifi SSID', width: '180px' },
+            { id: 'customer_wifi_password', name: 'Wifi Password', width: '180px' },
+            { id: 'customer_installation_date', name: 'Installation Date', width: '180px' },
+            { id: 'customer_activation_date', name: 'Activation Date', width: '180px' },
+            { id: 'customer_installation_engineer', name: 'Installation Engineer', width: '180px' },
+        ],
+        width: 2000,
+        resizable: true,
+        height: '50%',
+        server: {
+            url: '/link-details/data',
+            then: results => results.data,
+            total: results => results.total,
+        },
+        search: {
+            enabled: true,
+            server: {
+                url: (prev, search) => {
+                    return updateUrl(prev, { search });
+                },
+            },
+        },
+        pagination: {
+            enabled: true,
+            server: {
+                url: (prev, page, limit) => {
+                    return updateUrl(prev, { start: page * limit, length: limit });
+                },
+            },
+        },
+        language: {
+            'search': {
+                'placeholder': '🔍 Search...'
+            },
+            'pagination': {
+                'previous': 'Previous',
+                'next': 'Next',
+                'showing': 'Displaying',
+                'results': () => 'Records'
+            }
+        },
+        className: {
+            table: 'table-responsive'
+        }
+    }).render(document.getElementById('table'));
 </script>
 {% endblock %}

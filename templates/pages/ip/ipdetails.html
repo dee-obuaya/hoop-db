@@ -1,109 +1,82 @@
+{% if current_user.privileges != 'Admin' %}
 {% extends 'layouts/base.html' %}
+{% else %}
+{% extends 'layouts/adminbase.html' %}
+{% endif %}
 
-{% block title %}HOOP | IP Details{% endblock %}
+{% block title %}HOOP | Customers{% endblock %}
 
 {% block header %}
-<h2>Customers IP Details
+<h2>Users
     <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
 </h2>
 {% endblock %}
 
 {% block content %}
-
-<form class="search" method="post" action="">
-    <input class="form-control" type="search" id="search_box" placeholder="Find customer" aria-label="Search">
-</form>
-
-{% for message in get_flashed_messages() %}
-<div class=flash>
-    {{ message }}
-</div>
-{% endfor %}
-
-<div class="table-responsive">
-
-    <table class="table align-middle table-hover table-bordered">
-
-        <thead>
-            <tr>
-                <th>S/N</th>
-                <th>Customer Name</th>
-                <th>Customer Code</th>
-                <th>Radio Subnet</th>
-                <th>MU IP</th>
-                <th>SU IP</th>
-                <th>Provider Edge Router</th>
-                <th>Customer WAN IP</th>
-                <th>Customer WAN Subnet</th>
-                <th>Customer WAN Gateway</th>
-                <th>WAN Routing Protocol</th>
-                <th>Customer IP</th>
-                <th>Subnet Mask</th>
-                <th>Gateway</th>
-            </tr>
-        </thead>
-        <tbody class="table-group-divider" id="search">
-            {% for customer in response: %}
-            <tr>
-                <td>{{ response.index(customer) + 1 }}</td>
-                <td>{{ customer.customer_name }}</td>
-                <td>{{ customer.customer_code }}</td>
-                <td>{{ customer.customer_subnet }} </td>
-                <td>{{ customer.customer_mu_ip }}</td>
-                <td>{{ customer.customer_su_ip }}</td>
-                <td>{{ customer.customer_provider_edge_router }}</td>
-                <td>{{ customer.customer_wan_ip }}</td>
-                <td>{{ customer.customer_wan_subnet }}</td>
-                <td>{{ customer.customer_wan_gateway }}</td>
-                <td>{{ customer.customer_wan_routing_protocol }}</td>
-                <td>{{ customer.customer_ip }}</td>
-                <td>{{ customer.customer_subnet_mask }}</td>
-                <td>{{ customer.customer_gateway }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-
-    </table>
-
-</div>
-
+<div id="table"></div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-    $(document).ready(function () {
-        $("#search_box").on("input", function (e) {
-            search_text = $("#search_box").val();
-            $("#search").empty();
-            // console.log(text)
-            $.ajax({
-                method: "post",
-                url: "/search/ip-details",
-                data: { text: search_text },
-                success: function (res) {
-                    var data;
-                    $.each(res, function (index, value) {
-                        data += "<tr>";
-                        data += "<td>" + (index + 1) + "</td>";
-                        data += "<td>" + value.customer_name + "</td>";
-                        data += "<td>" + value.customer_code + "</td>";
-                        data += "<td>" + value.customer_subnet + "</td>";
-                        data += "<td>" + value.customer_mu_ip + "</td>";
-                        data += "<td>" + value.customer_su_ip + "</td>";
-                        data += "<td>" + value.customer_provider_edge_router + "</td>";
-                        data += "<td>" + value.customer_wan_ip + "</td>";
-                        data += "<td>" + value.customer_wan_subnet + "</td>";
-                        data += "<td>" + value.customer_wan_gateway + "</td>";
-                        data += "<td>" + value.customer_wan_routing_protocol + "</td>";
-                        data += "<td>" + value.customer_ip + "</td>";
-                        data += "<td>" + value.customer_subnet_mask + "</td>";
-                        data += "<td>" + value.customer_gateway + "</td>";
-                        data += "</tr>";
-                    });
-                    $("#search").html(data);
-                }
-            })
-        });
-    })
+    const updateUrl = (prev, query) => {
+        return prev + (prev.indexOf('?') >= 0 ? '&' : '?') + new URLSearchParams(query).toString();
+    };
+
+    new gridjs.Grid({
+        columns: [
+            { id: 's_n', name: '', width: '20px' },
+            { id: 'customer_name', name: 'Customer Name' },
+            { id: 'customer_code', name: 'Customer Code' },
+            { id: 'customer_subnet', name: 'Subnet' },
+            { id: 'customer_mu_ip', name: 'MU IP' },
+            { id: 'customer_su_ip', name: 'SU IP' },
+            { id: 'customer_provider_edge_router', name: 'Provider Edge Router' },
+            { id: 'customer_wan_ip', name: 'WAN IP' },
+            { id: 'customer_wan_subnet', name: 'WAN Subnet' },
+            { id: 'customer_wan_gateway', name: 'WAN Gateway' },
+            { id: 'customer_wan_routing_protocol', name: 'WAN Routing Protocol' },
+            { id: 'customer_ip', name: 'Customer IP' },
+            { id: 'customer_subnet_mask', name: 'Subnet Mask' },
+            { id: 'customer_gateway', name: 'Gateway' },
+        ],
+        width: 2000,
+        resizable: true,
+        height: '50%',
+        server: {
+            url: '/ip-details/data',
+            then: results => results.data,
+            total: results => results.total,
+        },
+        search: {
+            enabled: true,
+            server: {
+                url: (prev, search) => {
+                    return updateUrl(prev, { search });
+                },
+            },
+        },
+        pagination: {
+            enabled: true,
+            server: {
+                url: (prev, page, limit) => {
+                    return updateUrl(prev, { start: page * limit, length: limit });
+                },
+            },
+        },
+        language: {
+            'search': {
+                'placeholder': '🔍 Search...'
+            },
+            'pagination': {
+                'previous': 'Previous',
+                'next': 'Next',
+                'showing': 'Displaying',
+                'results': () => 'Records'
+            }
+        },
+        className: {
+            table: 'table-responsive'
+        }
+    }).render(document.getElementById('table'));
 </script>
 {% endblock %}

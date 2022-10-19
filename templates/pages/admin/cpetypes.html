@@ -1,71 +1,73 @@
+{% if current_user.privileges != 'Admin' %}
 {% extends 'layouts/base.html' %}
-
-{% block title %}HOOP | CPE Types{% endblock %}
+{% else %}
+{% extends 'layouts/adminbase.html' %}
+{% endif %}
+{% block title %}HOOP | CPEs{% endblock %}
 
 {% block header %}
-<h2>CPE Types
+<h2>CPEs
+    {% if (current_user.privileges != 'Admin') %}
     <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+    {% else %}
+    <a href="{{ url_for('admin_index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+    {% endif %}
 </h2>
 {% endblock %}
 
 {% block content %}
-
-<form class="search" method="post" action="">
-    <input class="form-control" type="search" id="search_box" placeholder="Find cpe" aria-label="Search">
-</form>
-
-{% for message in get_flashed_messages() %}
-<div class=flash>
-    {{ message }}
-</div>
-{% endfor %}
-
-<table class="table table-hover table-bordered">
-
-    <thead>
-        <tr>
-            <th>S/N</th>
-            <th>CPE Name</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody class="table-group-divider" id="search">
-        {% for cpe in response: %}
-        <tr>
-            <td>{{ response.index(cpe) + 1 }}</td>
-            <td><a href="{{ url_for('update_cpe', cpe_id=cpe.id) }}">{{ cpe.cpe_name }}</a></td>
-            <td><a href="{{ url_for('delete_cpe', cpe_id=cpe.id) }}" onclick="return confirm('Are you sure you want to delete this cpe?');">❌</a></td>
-        </tr>
-        {% endfor %}
-    </tbody>
-
-</table>
+<div id="table"></div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-    $(document).ready(function () {
-        $("#search_box").on("input", function (e) {
-            search_text = $("#search_box").val();
-            $("#search").empty();
-            // console.log(text)
-            $.ajax({
-                method: "post",
-                url: "/search/cpes",
-                data: { text: search_text },
-                success: function (res) {
-                    var data;
-                    $.each(res, function (index, value) {
-                        data += "<tr>";
-                        data += "<td>" + (index + 1) + "</td>";
-                        data += "<td><a href=''>" + value.cpe_name + "</a></td>";
-                        data += '<td><a href="" onclick="return confirm("Are you sure you want to delete this cpe?");">❌</a></td>';
-                        data += "</tr>";
-                    });
-                    $("#search").html(data);
-                }
-            })
-        });
-    })
+    const updateUrl = (prev, query) => {
+        return prev + (prev.indexOf('?') >= 0 ? '&' : '?') + new URLSearchParams(query).toString();
+    };
+
+    new gridjs.Grid({
+        columns: [
+            { id: 's_n', name: '', width: '20px' },
+            { id: 'cpe_name', name: 'CPE Name', formatter: (cell) => gridjs.html(`<a href='/cpes/${cell}/edit'}}'>${cell}</a>`) },
+            { id: 'del', name: '', width: '80px', formatter: (_, row) => gridjs.html(`<a href='/cpes/${row.cells[1].data}/delete'}}' onclick="return confirm('Are you sure you want to delete this cpe?');"><i class="fa-solid fa-trash"></i></a>`) }
+        ],
+        resizable: true,
+        height: '50%',
+        server: {
+            url: '/cpes/data',
+            then: results => results.data,
+            total: results => results.total,
+        },
+        search: {
+            enabled: true,
+            server: {
+                url: (prev, search) => {
+                    return updateUrl(prev, { search });
+                },
+            },
+        },
+        pagination: {
+            enabled: true,
+            server: {
+                url: (prev, page, limit) => {
+                    return updateUrl(prev, { start: page * limit, length: limit });
+                },
+            },
+        },
+        language: {
+            'search': {
+                'placeholder': '🔍 Search...'
+            },
+            'pagination': {
+                'previous': 'Previous',
+                'next': 'Next',
+                'showing': 'Displaying',
+                'results': () => 'Records'
+            }
+        },
+        className: {
+            table: 'table-responsive'
+        }
+    }).render(document.getElementById('table'));
 </script>
 {% endblock %}

@@ -2,7 +2,15 @@
 
 {% block title %}HOOP{% endblock %}
 
+{% block header %} 
+<h2>Home
+    <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
+</h2>
+{% endblock %} 
+
 {% block content %}
-<img src="../../static/img/hoop-telecoms-logo-removebg-preview.png" alt="">
+<div class="logo">
+    <img src="../../static/img/hoop-telecoms-logo-removebg-preview.png" alt="" width="600" height="300">
+</div>
 {% endblock %}
 

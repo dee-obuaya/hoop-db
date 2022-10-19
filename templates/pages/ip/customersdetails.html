@@ -1,4 +1,8 @@
+{% if current_user.privileges != 'Admin' %}
 {% extends 'layouts/base.html' %}
+{% else %}
+{% extends 'layouts/adminbase.html' %}
+{% endif %}
 
 {% block title %}HOOP | Customers Details{% endblock %}
 
@@ -9,97 +13,69 @@
 {% endblock %}
 
 {% block content %}
-<form class="search" method="post" action="">
-    <input class="form-control" type="search" id="search_box" placeholder="Find customer" aria-label="Search">
-</form>
-
-{% for message in get_flashed_messages() %}
-<div class=flash>
-    {{ message }}
-</div>
-{% endfor %}
-
-<div class="table-responsive">
-    <table class="table align-middle table-hover table-bordered">
-
-        <thead>
-            <tr>
-                <th>S/N</th>
-                <th>Customer Name</th>
-                <th>Customer Code</th>
-                <th>Current Status</th>
-                <th>Location (State)</th>
-                <th>Partner</th>
-                <th>Service Type</th>
-                <th>Service Plan</th>
-                <th>Bandwidth Plan</th>
-                <th>Contact Person</th>
-                <th>Phone Number</th>
-                <th>Email ID</th>
-                <th>Physical Address</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody class="table-group-divider" id="search">
-            {% for customer in response: %}
-            <tr>
-                <td>{{ response.index(customer) + 1 }}</td>
-                <td>{{ customer.customer_name }} </td>
-                <td>{{ customer.customer_code }}</td>
-                <td>{{ customer.customer_status }} </td>
-                <td>{{ customer.customer_location }}</td>
-                <td>{{ customer.customer_partner }}</td>
-                <td>{{ customer.customer_service_type }}</td>
-                <td>{{ customer.customer_service_plan }}</td>
-                <td>{{ customer.customer_bandwidth_plan }}</td>
-                <td>{{ customer.customer_contact_person }}</td>
-                <td>{{ customer.customer_phone_number }}</td>
-                <td>{{ customer.customer_email }}</td>
-                <td>{{ customer.customer_physical_address }}</td>
-                <td></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-
-    </table>
-
-</div>
+<div id="table"></div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-    $(document).ready(function () {
-        $("#search_box").on("input", function (e) {
-            search_text = $("#search_box").val();
-            $("#search").empty();
-            // console.log(text)
-            $.ajax({
-                method: "post",
-                url: "/search/customers-details",
-                data: { text: search_text },
-                success: function (res) {
-                    var data;
-                    $.each(res, function (index, value) {
-                        data += "<tr>";
-                        data += "<td>" + (index + 1) + "</td>";
-                        data += "<td>" + value.customer_name + "</td>";
-                        data += "<td>" + value.customer_code + "</td>";
-                        data += "<td>" + value.customer_status + "</td>";
-                        data += "<td>" + value.customer_location + "</td>";
-                        data += "<td>" + value.customer_partner + "</td>";
-                        data += "<td>" + value.customer_service_type + "</td>";
-                        data += "<td>" + value.customer_service_plan + "</td>";
-                        data += "<td>" + value.customer_bandwidth_plan + "</td>";
-                        data += "<td>" + value.customer_contact_person + "</td>";
-                        data += "<td>" + value.customer_phone_number + "</td>";
-                        data += "<td>" + value.customer_email + "</td>";
-                        data += "<td>" + value.customer_physical_address + "</td>";
-                        data += "</tr>";
-                    });
-                    $("#search").html(data);
-                }
-            })
-        });
-    })
+    const updateUrl = (prev, query) => {
+        return prev + (prev.indexOf('?') >= 0 ? '&' : '?') + new URLSearchParams(query).toString();
+    };
+
+    new gridjs.Grid({
+        columns: [
+            { id: 's_n', name: '', width: '20px' },
+            { id: 'customer_name', name: 'Customer Name' },
+            { id: 'customer_code', name: 'Customer Code' },
+            { id: 'customer_status', name: 'Customer Status' },
+            { id: 'customer_location', name: 'Location (State)' },
+            { id: 'customer_partner', name: 'Partner' },
+            { id: 'customer_service_type', name: 'Service Type' },
+            { id: 'customer_service_plan', name: 'Service Plan' },
+            { id: 'customer_bandwidth_plan', name: 'Bandwidth Plan' },
+            { id: 'customer_contact_person', name: 'Contact Person' },
+            { id: 'customer_phone_number', name: 'Phone Number' },
+            { id: 'customer_email', name: 'Email' },
+            { id: 'customer_physical_address', name: 'Physical Address' }
+        ],
+        width: 2000,
+        resizable: true,
+        height: '50%',
+        server: {
+            url: '/customers-details/data',
+            then: results => results.data,
+            total: results => results.total,
+        },
+        search: {
+            enabled: true,
+            server: {
+                url: (prev, search) => {
+                    return updateUrl(prev, { search });
+                },
+            },
+        },
+        pagination: {
+            enabled: true,
+            server: {
+                url: (prev, page, limit) => {
+                    return updateUrl(prev, { start: page * limit, length: limit });
+                },
+            },
+        },
+        language: {
+            'search': {
+                'placeholder': '🔍 Search...'
+            },
+            'pagination': {
+                'previous': 'Previous',
+                'next': 'Next',
+                'showing': 'Displaying',
+                'results': () => 'Records'
+            }
+        },
+        className: {
+            table: 'table-responsive'
+        }
+    }).render(document.getElementById('table'));
 </script>
 {% endblock %}
