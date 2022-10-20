@@ -13,7 +13,6 @@
     {% else %}
     <a href="{{ url_for('admin_index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
     {% endif %}
-
 </h2>
 {% endblock %}
 
@@ -43,13 +42,14 @@
             { id: 'customer_status', name: 'Status', width: '180px' },
             { id: 'del', name: '', width: '80px', formatter: (_, row) => gridjs.html(`<a href='/change-implementation-trackers/${row.cells[3].data}/delete'}}' onclick="return confirm('Are you sure you want to delete this entry?');"><i class="fa-solid fa-trash"></i></a>`), width: '50px' }
         ],
-        resizable: true,
-        height: '50%',
+        fixedHeader: true,
+        // height: '600px',
         server: {
             url: '/change-implementation-trackers/data',
             then: results => results.data,
             total: results => results.total,
         },
+        resizable: true,
         search: {
             enabled: true,
             server: {

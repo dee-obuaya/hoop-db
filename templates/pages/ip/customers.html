@@ -29,7 +29,7 @@
 
     new gridjs.Grid({
         columns: [
-            { id: 's_n', name: 'S/N', width: '20px' },
+            { id: 's_n', name: '', width: '20px' },
             { id: 'customer_name', name: 'Name', width: '200px' },
             { id: 'customer_code', name: 'Code', formatter: (cell) => gridjs.html(`<a href='/customers/${cell}/edit'}}'>${cell}</a>`), width: '100px' },
             { id: 'customer_status', name: 'Status', width: '100px' },
@@ -74,16 +74,17 @@
             { id: 'customer_phone_number', name: 'Phone Number', width: '180px' },
             { id: 'customer_email', name: 'Email', width: '200px' },
             { id: 'customer_physical_address', name: 'Physical Address', width: '180px' },
-            { id: 'del', name: '', formatter: (_, row) => gridjs.html(`<a href='/customers/${row.cells[1].data}/delete'}}' onclick="return confirm('Are you sure you want to delete this partner?');"><i class="fa-solid fa-trash"></i></a>`), width: '80px' }
+            { id: 'del', name: '', formatter: (_, row) => gridjs.html(`<a href='/customers/${row.cells[2].data}/delete'}}' onclick="return confirm('Are you sure you want to delete this partner?');"><i class="fa-solid fa-trash"></i></a>`), width: '80px' }
         ],
-        width: 2000,
-        resizable: true,
-        height: '50%',
+        width: 1800,
+        fixedHeader: true,
+        height: '600px',
         server: {
             url: '/customers/data',
             then: results => results.data,
             total: results => results.total,
         },
+        resizable: true,
         search: {
             enabled: true,
             server: {

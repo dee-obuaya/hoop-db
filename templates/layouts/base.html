@@ -66,15 +66,26 @@
                     <li class="nav-item has-submenu">
                         <a href="#" class="nav-link">Customers</a>
                         <ul class="submenu collapse">
-                            <li><a href="{{ url_for('get_customers') }}" class="nav-link">View Customers</a></li>
-                            <li><a href="{{ url_for('get_customers_details') }}" class="nav-link">View Customers
-                                    Details</a></li>
-                            <li><a href="{{ url_for('get_link_details') }}" class="nav-link">View Customers Link
-                                    Details</a></li>
-                            <li><a href="{{ url_for('get_ip_details') }}" class="nav-link">View Customers IP Details</a>
+                            <li>
+                                <a href="{{ url_for('get_customers') }}" class="nav-link">View Customers</a>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('get_customers_details') }}" class="nav-link">
+                                    View Customers Contact Details
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('get_link_details') }}" class="nav-link">
+                                    View Customers Link Details
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('get_ip_details') }}" class="nav-link">View Customers IP Details</a>
                             </li>
                             {% if current_user.department == 'IP' %}
-                            <li><a href="{{ url_for('add_customer') }}" class="nav-link">Add Customer</a></li>
+                            <li>
+                                <a href="{{ url_for('add_customer') }}" class="nav-link">Add Customer</a>
+                            </li>
                             {% endif %}
                         </ul>
                     </li>
@@ -83,10 +94,15 @@
                     <li class="nav-item has-submenu">
                         <a href="#" class="nav-link">Customers PRTG</a>
                         <ul class="submenu collapse">
-                            <li><a href="{{ url_for('get_customers_prtg') }}" class="nav-link">View Customers PRTG</a></li>
+                            <li>
+                                <a href="{{ url_for('get_customers_prtg') }}" class="nav-link">View Customers PRTG</a>
+                            </li>
                             {% if (current_user.department == 'IP') %}
-                            <li><a type="button" class="nav-link" data-bs-toggle="modal" data-bs-target="#prtgModal">Add
-                                    Customer PRTG</a></li>
+                            <li>
+                                <a type="button" class="nav-link" data-bs-toggle="modal" data-bs-target="#prtgModal">
+                                    Add Customer PRTG
+                                </a>
+                            </li>
                             {% endif %}
                         </ul>
                     </li>
@@ -95,92 +111,145 @@
                     <li class="nav-item has-submenu">
                         <a href="#" class="nav-link">Customers Password</a>
                         <ul class="submenu collapse">
-                            <li><a href="{{ url_for('get_customers_password') }}" class="nav-link">View Customers Password</a></li>
-                            <li><a type="button" class="nav-link" data-bs-toggle="modal"
-                                    data-bs-target="#passwordModal">Add Customer Password</a></li>
+                            <li>
+                                <a href="{{ url_for('get_customers_password') }}" class="nav-link">
+                                    View Customers Password
+                                </a>
+                            </li>
+                            <li>
+                                <a type="button" class="nav-link" data-bs-toggle="modal" data-bs-target="#passwordModal">
+                                    Add Customer Password
+                                </a>
+                            </li>
                         </ul>
                     </li>
                     <li class="nav-item has-submenu">
                         <a href="#" class="nav-link">Link Activation Trackers</a>
                         <ul class="submenu collapse">
-                            <li><a href="{{ url_for('get_link_activation_trackers') }}" class="nav-link">View Link Activation Trackers</a></li>
-                            <li><a type="button" class="nav-link" data-bs-toggle="modal" data-bs-target="#latModal">Add
-                                    Link Activation Tracker</a></li>
+                            <li>
+                                <a href="{{ url_for('get_link_activation_trackers') }}" class="nav-link">
+                                    View Link Activation Trackers
+                                </a>
+                            </li>
+                            <li>
+                                <a type="button" class="nav-link" data-bs-toggle="modal" data-bs-target="#latModal">
+                                    Add Link Activation Tracker
+                                </a>
+                            </li>
                         </ul>
                     </li>
                     <li class="nav-item has-submenu">
                         <a href="#" class="nav-link">Change Implementation Trackers</a>
                         <ul class="submenu collapse">
-                            <li><a href="{{ url_for('get_change_implementation_trackers') }}" class="nav-link">View Change Implementation Trackers</a></li>
-                            <li><a type="button" class="nav-link" data-bs-toggle="modal" data-bs-target="#citModal">Add
-                                    Change Implementation Trackers</a></li>
+                            <li>
+                                <a href="{{ url_for('get_change_implementation_trackers') }}" class="nav-link">
+                                    View Change Implementation Trackers
+                                </a>
+                            </li>
+                            <li>
+                                <a type="button" class="nav-link" data-bs-toggle="modal" data-bs-target="#citModal">
+                                    Add Change Implementation Trackers
+                                </a>
+                            </li>
                         </ul>
                     </li>
                     <li class="nav-item has-submenu">
                         <a href="#" class="nav-link">Partners</a>
                         <ul class="submenu collapse">
-                            <li><a href="{{ url_for('get_partners') }}" class="nav-link">View Partners</a></li>
-                            <li><a href="{{ url_for('add_partner') }}" class="nav-link">Add Partner</a></li>
+                            <li>
+                                <a href="{{ url_for('get_partners') }}" class="nav-link">View Partners</a>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('add_partner') }}" class="nav-link">Add Partner</a>
+                            </li>
                         </ul>
                     </li>
                     <li class="nav-item has-submenu">
                         <a href="#" class="nav-link">Servers</a>
                         <ul class="submenu collapse">
-                            <li><a href="{{ url_for('get_servers') }}" class="nav-link">View Servers</a></li>
-                            <li><a href="{{ url_for('add_server') }}" class="nav-link">Add Server</a></li>
+                            <li>
+                                <a href="{{ url_for('get_servers') }}" class="nav-link">View Servers</a>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('add_server') }}" class="nav-link">Add Server</a>
+                            </li>
                         </ul>
                     </li>
                     <li class="nav-item has-submenu">
                         <a href="#" class="nav-link">Vlans</a>
                         <ul class="submenu collapse">
-                            <li><a href="{{ url_for('get_vlans') }}" class="nav-link">View Vlans</a></li>
-                            <li><a href="{{ url_for('add_vlan') }}" class="nav-link">Add Vlan</a></li>
+                            <li>
+                                <a href="{{ url_for('get_vlans') }}" class="nav-link">View Vlans</a>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('add_vlan') }}" class="nav-link">Add Vlan</a>
+                            </li>
                         </ul>
                     </li>
                     <li class="nav-item has-submenu">
                         <a href="#" class="nav-link">Connections</a>
                         <ul class="submenu collapse">
-                            <li><a href="{{ url_for('get_connections') }}" class="nav-link">View Connections</a></li>
-                            <li><a href="{{ url_for('add_connection') }}" class="nav-link">Add Connection</a></li>
+                            <li>
+                                <a href="{{ url_for('get_connections') }}" class="nav-link">View Connections</a>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('add_connection') }}" class="nav-link">Add Connection</a>
+                            </li>
                         </ul>
                     </li>
                     <li class="nav-item has-submenu">
                         <a href="#" class="nav-link">Radios</a>
                         <ul class="submenu collapse">
-                            <li><a href="{{ url_for('get_radios') }}" class="nav-link">View Radios</a></li>
-                            <li><a href="{{ url_for('add_radio') }}" class="nav-link">Add Radio</a></li>
+                            <li>
+                                <a href="{{ url_for('get_radios') }}" class="nav-link">View Radios</a>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('add_radio') }}" class="nav-link">Add Radio</a>
+                            </li>
                         </ul>
                     </li>
                     <li class="nav-item has-submenu">
                         <a href="#" class="nav-link">Service Types</a>
                         <ul class="submenu collapse">
-                            <li><a href="{{ url_for('get_service_types') }}" class="nav-link">View Service Types</a>
+                            <li>
+                                <a href="{{ url_for('get_service_types') }}" class="nav-link">View Service Types</a>
                             </li>
-                            <li><a href="{{ url_for('add_service_type') }}" class="nav-link">Add Service Type</a></li>
+                            <li>
+                                <a href="{{ url_for('add_service_type') }}" class="nav-link">Add Service Type</a>
+                            </li>
                         </ul>
                     </li>
                     <li class="nav-item has-submenu">
                         <a href="#" class="nav-link">Service Plans</a>
                         <ul class="submenu collapse">
-                            <li><a href="{{ url_for('get_service_plans') }}" class="nav-link">View Service Plans</a>
+                            <li>
+                                <a href="{{ url_for('get_service_plans') }}" class="nav-link">View Service Plans</a>
                             </li>
-                            <li><a href="{{ url_for('add_service_plan') }}" class="nav-link">Add Service Plan</a></li>
+                            <li>
+                                <a href="{{ url_for('add_service_plan') }}" class="nav-link">Add Service Plan</a>
+                            </li>
                         </ul>
                     </li>
                     <li class="nav-item has-submenu">
                         <a href="#" class="nav-link">Bandwidth Plans</a>
                         <ul class="submenu collapse">
-                            <li><a href="{{ url_for('get_bandwidth_plans') }}" class="nav-link">View Bandwidth Plans</a>
+                            <li>
+                                <a href="{{ url_for('get_bandwidth_plans') }}" class="nav-link">View Bandwidth Plans</a>
                             </li>
-                            <li><a href="{{ url_for('add_bandwidth_plan') }}" class="nav-link">Add Bandwidth Plan</a>
+                            <li>
+                                <a href="{{ url_for('add_bandwidth_plan') }}" class="nav-link">Add Bandwidth Plan</a>
                             </li>
                         </ul>
                     </li>
                     <li class="nav-item has-submenu">
                         <a href="#" class="nav-link">CPEs</a>
                         <ul class="submenu collapse">
-                            <li><a href="{{ url_for('get_cpes') }}" class="nav-link">View CPEs</a></li>
-                            <li><a href="{{ url_for('add_cpe') }}" class="nav-link">Add CPE</a></li>
+                            <li>
+                                <a href="{{ url_for('get_cpes') }}" class="nav-link">View CPEs</a>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('add_cpe') }}" class="nav-link">Add CPE</a>
+                            </li>
                         </ul>
                     </li>
                     {% endif %}
@@ -201,8 +270,8 @@
                 {% with messages = get_flashed_messages() %}
                 {% if messages %}
                 {% for message in messages %}
-                <div class="alert alert-block alert-info fade in">
-                    <a class="close" data-dismiss="alert">&times;</a>
+                <div class="alert alert-block alert-info alert-dismissable fade in show" role="alert">
+                    <a role="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">&times;</a>
                     {{ message }}
                 </div>
                 {% endfor %}
@@ -225,13 +294,11 @@
                         <div class="form-wrapper">
                             <form method="post" action="{{ url_for('verify_code_for_password') }}" class="form">
                                 <div class="form-group">
-                                    <input type="text" placeholder="Customer Code" class="field">
+                                    <input type="text" placeholder="Customer Code" name="customer_code"
+                                        class="form-control">
                                 </div>
                             </form>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-block btn-lg">get</button>
                     </div>
                 </div>
             </div>
@@ -248,13 +315,11 @@
                         <div class="form-wrapper">
                             <form method="post" action="{{ url_for('verify_code_for_prtg') }}" class="form">
                                 <div class="form-group">
-                                    <input type="text" placeholder="Customer Code" class="field">
+                                    <input type="text" placeholder="Customer Code" name="customer_code"
+                                        class="form-control">
                                 </div>
                             </form>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-block btn-lg">get</button>
                     </div>
                 </div>
             </div>
@@ -271,13 +336,11 @@
                         <div class="form-wrapper">
                             <form method="post" action="{{ url_for('verify_code_for_lat') }}" class="form">
                                 <div class="form-group">
-                                    <input type="text" placeholder="Customer Code" class="field">
+                                    <input type="text" placeholder="Customer Code" name="customer_code"
+                                        class="form-control">
                                 </div>
                             </form>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-block btn-lg">get</button>
                     </div>
                 </div>
             </div>
@@ -294,13 +357,11 @@
                         <div class="form-wrapper">
                             <form method="post" action="{{ url_for('verify_code_for_cit') }}" class="form">
                                 <div class="form-group">
-                                    <input type="text" placeholder="Customer Code" class="field">
+                                    <input type="text" placeholder="Customer Code" name="customer_code"
+                                        class="form-control">
                                 </div>
                             </form>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-block btn-lg">get</button>
                     </div>
                 </div>
             </div>

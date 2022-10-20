@@ -654,7 +654,7 @@ class CustomerPassword(db.Model):
         db.session.commit()
 
     def update(self):
-        db.session.commit(self)
+        db.session.commit()
 
     def delete(self):
         db.session.delete(self)
@@ -703,7 +703,7 @@ class CustomerPRTG(db.Model):
         db.session.commit()
 
     def update(self):
-        db.session.commit(self)
+        db.session.commit()
 
     def delete(self):
         db.session.delete(self)
@@ -755,7 +755,7 @@ class LinkActivationTracker(db.Model):
         db.session.commit()
 
     def update(self):
-        db.session.commit(self)
+        db.session.commit()
 
     def delete(self):
         db.session.delete(self)
@@ -820,7 +820,7 @@ class ChangeImplementationTracker(db.Model):
         db.session.commit()
 
     def update(self):
-        db.session.commit(self)
+        db.session.commit()
 
     def delete(self):
         db.session.delete(self)
@@ -831,11 +831,15 @@ class ChangeImplementationTracker(db.Model):
             'id': self.id,
             'customer_name': self.customer_name,
             'customer_code': self.customer_code,
-            'customer_basestation_id': self.customer_basestation_id,
-            'customer_service_desc': self.customer_service_desc,
+            'customer_change_id': self.customer_change_id,
+            'customer_change_desc': self.customer_change_desc,
+            'customer_change_type': self.customer_change_type,
+            'customer_instructed_by': self.customer_instructed_by,
+            'customer_approved_by': self.customer_approved_by,
             'customer_request_date': self.customer_request_date,
-            'customer_link_completion_date': self.customer_link_completion_date,
-            'customer_implemented_by': self.customer_implemented_by
+            'customer_implementation_date_and_time': self.customer_implementation_date_and_time,
+            'customer_implemented_by': self.customer_implemented_by,
+            'customer_status': self.customer_status
         }
 
     def to_dict(self):
@@ -843,9 +847,13 @@ class ChangeImplementationTracker(db.Model):
             'id': self.id,
             'customer_name': self.customer_name,
             'customer_code': self.customer_code,
-            'customer_basestation_id': self.customer_basestation_id,
-            'customer_service_desc': self.customer_service_desc,
+            'customer_change_id': self.customer_change_id,
+            'customer_change_desc': self.customer_change_desc,
+            'customer_change_type': self.customer_change_type,
+            'customer_instructed_by': self.customer_instructed_by,
+            'customer_approved_by': self.customer_approved_by,
             'customer_request_date': self.customer_request_date,
-            'customer_link_completion_date': self.customer_link_completion_date,
-            'customer_implemented_by': self.customer_implemented_by
+            'customer_implementation_date_and_time': self.customer_implementation_date_and_time,
+            'customer_implemented_by': self.customer_implemented_by,
+            'customer_status': self.customer_status
         }

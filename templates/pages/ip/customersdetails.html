@@ -24,7 +24,7 @@
 
     new gridjs.Grid({
         columns: [
-            { id: 's_n', name: '', width: '20px' },
+            { id: 's_n', name: '', width: '10px' },
             { id: 'customer_name', name: 'Customer Name' },
             { id: 'customer_code', name: 'Customer Code' },
             { id: 'customer_status', name: 'Customer Status' },
@@ -38,14 +38,15 @@
             { id: 'customer_email', name: 'Email' },
             { id: 'customer_physical_address', name: 'Physical Address' }
         ],
-        width: 2000,
-        resizable: true,
-        height: '50%',
+        width: 1800,
+        fixedHeader: true,
+        height: '600px',
         server: {
             url: '/customers-details/data',
             then: results => results.data,
             total: results => results.total,
         },
+        resizable: true,
         search: {
             enabled: true,
             server: {

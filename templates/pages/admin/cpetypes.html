@@ -31,13 +31,14 @@
             { id: 'cpe_name', name: 'CPE Name', formatter: (cell) => gridjs.html(`<a href='/cpes/${cell}/edit'}}'>${cell}</a>`) },
             { id: 'del', name: '', width: '80px', formatter: (_, row) => gridjs.html(`<a href='/cpes/${row.cells[1].data}/delete'}}' onclick="return confirm('Are you sure you want to delete this cpe?');"><i class="fa-solid fa-trash"></i></a>`) }
         ],
-        resizable: true,
-        height: '50%',
+        fixedHeader: true,
+        // height: '600px',
         server: {
             url: '/cpes/data',
             then: results => results.data,
             total: results => results.total,
         },
+        resizable: true,
         search: {
             enabled: true,
             server: {

@@ -48,6 +48,7 @@
 
         <div class="button">
             <input class="btn btn-lg btn-block" type="submit" value="UPLOAD">
+            <a role="button" href="{{ url_for('get_radios') }}" class="btn btn-lg btn-block">Cancel</a>
         </div>
     </form>
     {% elif is_edit %}
@@ -60,7 +61,8 @@
         </div>
 
         <div class="button">
-            <input type="submit" class="btn btn-lg btn-block" value="edit radio">
+            <input type="submit" class="btn btn-lg btn-block" value="update">
+            <a role="button" href="{{ url_for('get_radios') }}" class="btn btn-lg btn-block">Cancel</a>
         </div>
     </form>
     {% else: %}
@@ -73,7 +75,8 @@
         </div>
 
         <div class="button">
-            <input type="submit" class="btn btn-lg btn-block" value="add radio">
+            <input type="submit" class="btn btn-lg btn-block" value="add">
+            <a role="button" href="{{ url_for('get_radios') }}" class="btn btn-lg btn-block">Cancel</a>
         </div>
     </form>
     {% endif %}

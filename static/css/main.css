@@ -87,14 +87,12 @@ a {
     -webkit-transition: color 0.2s ease-in-out, border-bottom-color 0.2s ease-in-out;
     -ms-transition: color 0.2s ease-in-out, border-bottom-color 0.2s ease-in-out;
     transition: color 0.2s ease-in-out, border-bottom-color 0.2s ease-in-out;
-    border-bottom: dotted 1px;
     color: #760094;
     text-decoration: none;
 }
 
 a:hover {
-    border-bottom-color: #760094;
-    color: #760094 !important;
+    color: black !important;
 }
 
 h1,
@@ -107,7 +105,7 @@ h6 {
     font-family: inherit;
     font-weight: 700;
     line-height: 1.5;
-    margin: 0 0 1em 0;
+    margin: 0 0 0.5em 0;
     text-transform: uppercase;
 }
 
@@ -158,11 +156,8 @@ hr {
     margin: 2em 0;
 }
 
-header.major> :last-child {
-    border-bottom: solid 3px #760094;
-    display: inline-block;
-    margin: 0 0 2em 0;
-    padding: 0 0.75em 0.5em 0;
+header.major {
+    margin-top: 28px;
 }
 
 .sidebar {
@@ -171,13 +166,15 @@ header.major> :last-child {
     -ms-transition: margin-left 0.5s ease, box-shadow 0.5s ease;
     transition: margin-left 0.5s ease, box-shadow 0.5s ease;
     /* #f5f6f7 */
-    background-color: transparent;
+    background-color: #e2e1e3;
     font-size: 0.9em;
     position: relative;
     width: 26em;
     border-bottom: solid 2px rgba(210, 215, 217, 0.75);
     margin: 0 0 3.5em 0;
     padding: 2.22222em 2.22222em 5.94444em 2.22222em;
+    border-radius: 2em;
+    height: fit-content;
 
 }
 
@@ -218,7 +215,7 @@ header.major> :last-child {
 }
 
 .nav-link:hover {
-    color: #760094;
+    background-color: #760094;
 }
 
 #navbarSupportedContent>ul>li {
@@ -375,5 +372,13 @@ button:hover {
 }
 
 .logo {
+    text-align: center;
+}
+
+.pull-right {
+    float: right;
+}
+
+div#table {
     text-align: center;
 }

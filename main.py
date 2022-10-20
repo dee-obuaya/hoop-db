@@ -51,40 +51,6 @@ def admin_only(f):
     return decorated_function
 
 
-def admin_and_ip(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        allowed_privileges = ['Admin', 'Default']
-        allowed_departments = ['IP']
-        user_privileges = current_user.privileges
-        user_department = current_user.department
-
-        # If users privileges is not Admin or in IP or NOC then return abort with 403 error
-        if user_department not in allowed_departments or user_privileges not in allowed_privileges:
-            abort(403)
-        # Otherwise continue with the route function
-        return f(*args, **kwargs)
-
-    return decorated_function
-
-
-def admin_noc_ip(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        allowed_privileges = ['Admin', 'Default']
-        allowed_departments = ['IP', 'NOC']
-        user_privileges = current_user.privileges
-        user_department = current_user.department
-
-        # If users privileges is not Admin or in IP or NOC then return abort with 403 error
-        if user_department not in allowed_departments or user_privileges not in allowed_privileges:
-            abort(403)
-        # Otherwise continue with the route function
-        return f(*args, **kwargs)
-
-    return decorated_function
-
-
 def ip_only(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -97,21 +63,71 @@ def ip_only(f):
     return decorated_function
 
 
-def ip_and_others(f):
+def admin_and_ip(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        allowed_privileges = ['Admin', 'Default']
-        allowed_departments = ['IP', 'Service Management', 'Technical Support']
-        user_privileges = current_user.privileges
-        user_department = current_user.department
+        
+        if current_user.department != 'IP':
+            if current_user.privileges != 'Admin':
+                abort(403)
 
-        # If users privileges is not Admin or in IP or NOC then return abort with 403 error
-        if user_department not in allowed_departments or user_privileges not in allowed_privileges:
-            abort(403)
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+
+def add_update_bts(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        allowed_default_depts = ['IP', 'NOC']
+
+        if current_user.department not in allowed_default_depts:
+            if current_user.privileges != 'Admin':
+                abort(403)
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+
+def add_update_customer(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+
+        if current_user.department != 'IP':
+            if current_user.privileges != 'Admin':
+                abort(403)
+
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+
+def admin_noc_ip(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        allowed_default_departments = ['IP', 'NOC']
+        
+        if current_user.department not in allowed_default_departments:
+            if current_user.privileges != 'Admin':
+                abort(403)
         # Otherwise continue with the route function
         return f(*args, **kwargs)
 
     return decorated_function
+
+
+def ip_and_others(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        allowed_default_departments = ['IP', 'Service Management', 'Technical Support']
+
+        if current_user.department not in allowed_default_departments:
+            if current_user.privileges != 'Admin':
+                abort(403)
+        return f(*args, **kwargs)
+
+    return decorated_function
+
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -201,7 +217,7 @@ def get_users_data():
         'data': [{
             'username': user.username,
             'password': f.decrypt(user.password).decode(),
-            'departement': user.department,
+            'department': user.department,
             'privileges': user.privileges
         } for user in query],
         'total': total,
@@ -586,7 +602,7 @@ def get_basestations_data():
 
 @app.route('/basestations/new', methods=['GET', 'POST'])
 @login_required
-@admin_noc_ip
+@add_update_bts
 def add_basestation():
     form = BasestationForm()
 
@@ -673,7 +689,7 @@ def upload_basestations_csv():
 
 @app.route('/basestations/<basestation_id>/edit', methods=['GET', 'POST', 'PATCH'])
 @login_required
-@admin_and_ip
+@add_update_bts
 def update_basestation(basestation_id):
     basestation = Basestation.query.filter_by(
         basestation_id=basestation_id).one_or_none()
@@ -687,9 +703,9 @@ def update_basestation(basestation_id):
 
     if edit_form.validate_on_submit():
         try:
-            basestation.baestation_name = edit_form.basestation_name.data
+            basestation.basestation_name = edit_form.basestation_name.data
             basestation.basestation_location = edit_form.basestation_location.data
-            basestation.bsestation_contact = edit_form.basestation_contact.data
+            basestation.basestation_contact = edit_form.basestation_contact.data
 
             basestation.update()
             flash(f'Basestation {edit_form.basestation_id.data} updated.')
@@ -734,10 +750,8 @@ def delete_basestation(basestation_id):
 @login_required
 @admin_and_ip
 def get_servers():
-    selection = Server.query.order_by(Server.server_name)
-    formatted_selection = [server.format() for server in selection.all()]
 
-    return render_template('pages/admin/servers.html', response=formatted_selection, current_user=current_user)
+    return render_template('pages/admin/servers.html', current_user=current_user)
 
 
 @app.route('/servers/data')
@@ -917,10 +931,8 @@ def delete_server(server_name):
 @login_required
 @admin_and_ip
 def get_vlans():
-    selection = Vlan.query.order_by(Vlan.vlan_id)
-    formatted_selection = [vlan.format() for vlan in selection.all()]
 
-    return render_template('pages/admin/vlans.html', response=formatted_selection, current_user=current_user)
+    return render_template('pages/admin/vlans.html', current_user=current_user)
 
 
 @app.route('/vlans/data')
@@ -1095,10 +1107,8 @@ def delete_vlan(vlan_id):
 @login_required
 @admin_and_ip
 def get_connections():
-    selection = Connection.query.order_by(Connection.conn_name)
-    formatted_selection = [conn.format() for conn in selection.all()]
 
-    return render_template('pages/admin/connectiontypes.html', response=formatted_selection, current_user=current_user)
+    return render_template('pages/admin/connectiontypes.html', current_user=current_user)
 
 
 @app.route('/connections/data')
@@ -1269,10 +1279,8 @@ def delete_connection(conn_name):
 @login_required
 @admin_and_ip
 def get_radios():
-    selection = Radio.query.order_by(Radio.radio_name)
-    formatted_selection = [radio.format() for radio in selection.all()]
 
-    return render_template('pages/admin/radiotypes.html', response=formatted_selection, current_user=current_user)
+    return render_template('pages/admin/radiotypes.html', current_user=current_user)
 
 
 @app.route('/radios/data')
@@ -1439,10 +1447,8 @@ def delete_radio(radio_name):
 @login_required
 @admin_and_ip
 def get_service_types():
-    selection = ServiceType.query.order_by(ServiceType.service_name)
-    formatted_selection = [service.format() for service in selection.all()]
 
-    return render_template('pages/admin/servicetypes.html', response=formatted_selection, current_user=current_user)
+    return render_template('pages/admin/servicetypes.html', current_user=current_user)
 
 
 @app.route('/service-types/data')
@@ -1614,10 +1620,8 @@ def delete_service_type(service_name):
 @login_required
 @admin_and_ip
 def get_service_plans():
-    selection = ServicePlan.query.order_by(ServicePlan.service_plan)
-    formatted_selection = [plan.format() for plan in selection.all()]
 
-    return render_template('pages/admin/serviceplans.html', response=formatted_selection, current_user=current_user)
+    return render_template('pages/admin/serviceplans.html', current_user=current_user)
 
 
 @app.route('/service-plans/data')
@@ -1791,10 +1795,8 @@ def delete_service_plan(service_plan):
 @login_required
 @admin_and_ip
 def get_bandwidth_plans():
-    selection = BandwidthPlan.query.order_by(BandwidthPlan.bandwidth_name)
-    formatted_selection = [bandwidth.format() for bandwidth in selection.all()]
 
-    return render_template('pages/admin/bandwidths.html', response=formatted_selection, current_user=current_user)
+    return render_template('pages/admin/bandwidths.html', current_user=current_user)
 
 
 @app.route('/bandwidth-plans/data')
@@ -1964,10 +1966,8 @@ def delete_bandwidth_plan(bandwidth_name):
 @login_required
 @admin_and_ip
 def get_cpes():
-    selection = CPE.query.order_by(CPE.cpe_name)
-    formatted_selection = [cpe.format() for cpe in selection.all()]
 
-    return render_template('pages/admin/cpetypes.html', response=formatted_selection, current_user=current_user)
+    return render_template('pages/admin/cpetypes.html', current_user=current_user)
 
 
 @app.route('/cpes/data')
@@ -2219,7 +2219,7 @@ def get_customers_data():
 
 @app.route('/customers/new', methods=['GET', 'POST'])
 @login_required
-@ip_only
+@add_update_customer
 def add_customer():
     form = CustomerForm()
 
@@ -2247,6 +2247,8 @@ def add_customer():
             flash(f'Customer {form.customer_code.data} already exists.')
             return redirect(url_for('add_customer'))
         else:
+            key = load_key()
+            f = Fernet(key)
             try:
                 customer = Customer(
                     customer_name=form.customer_name.data,
@@ -2285,7 +2287,7 @@ def add_customer():
                     customer_service_plan=form.customer_service_plan.data,
                     customer_bandwidth_plan=form.customer_bandwidth_plan.data,
                     customer_wifi_ssid=form.customer_wifi_ssid.data,
-                    customer_wifi_password=form.customer_wifi_password.data,
+                    customer_wifi_password=f.encrypt(form.customer_wifi_password.data.encode()),
                     customer_installation_date=form.customer_installation_date.data,
                     customer_activation_date=form.customer_activation_date.data,
                     customer_installation_engineer=form.customer_installation_engineer.data,
@@ -2295,14 +2297,13 @@ def add_customer():
                     customer_physical_address=form.customer_physical_address.data,
                 )
                 customer.insert()
-                flash(
-                    f'Customer {form.customer_name.data} - {form.customer_code} created.')
+                flash(f'Customer {form.customer_name.data} - {form.customer_code.data} created.')
                 return redirect(url_for('get_customers'))
             except:
                 db.session.rollback()
                 print(sys.exc_info())
                 flash(
-                    f'Customer {form.customer_name.data} - {form.customer_code} could not be created. Try again.')
+                    f'Customer {form.customer_name.data} - {form.customer_code.data} could not be created. Try again.')
                 return redirect(url_for('add_customer'))
             finally:
                 db.session.close()
@@ -2454,7 +2455,7 @@ def upload_customers_csv():
 
 @app.route('/customers/<customer_code>/edit', methods=['POST', 'PATCH', 'GET'])
 @login_required
-@ip_only
+@add_update_customer
 def update_customer(customer_code):
     customer = Customer.query.filter_by(
         customer_code=customer_code).one_or_none()
@@ -2599,7 +2600,7 @@ def update_customer(customer_code):
 
 @app.route('/customers/<customer_code>/delete', methods=['GET', 'DELETE'])
 @login_required
-@ip_only
+@admin_and_ip
 def delete_customer(customer_code):
     customer = Customer.query.filter_by(
         customer_code=customer_code).one_or_none()
@@ -2613,18 +2614,10 @@ def delete_customer(customer_code):
         customer_code=customer_code).all()
 
     if customer_cit:
-        if len(customer_cit) == 1:
-            customer_cit.delete()
-        else:
-            for c in customer_cit:
-                c.delete()
+        customer_cit.delete()
 
     if customer_lat:
-        if len(customer_lat) == 1:
-            customer_lat.delete()
-        else:
-            for l in customer_lat:
-                l.delete()
+        customer_lat.delete()
 
     if customer_prtg:
         customer_prtg.delete()
@@ -2646,7 +2639,6 @@ def delete_customer(customer_code):
 
 @app.route('/customers-details')
 @login_required
-@ip_and_others
 def get_customers_details():
 
     return render_template('pages/ip/customersdetails.html', current_user=current_user)
@@ -2654,7 +2646,6 @@ def get_customers_details():
 
 @app.route('/customers-details/data')
 @login_required
-@ip_and_others
 def get_customers_details_data():
     query = db.session.query(
         Customer.customer_name,
@@ -2713,7 +2704,6 @@ def get_customers_details_data():
 
 @app.route('/link-details')
 @login_required
-@ip_and_others
 def get_link_details():
 
     return render_template('pages/ip/linkdetails.html', current_user=current_user)
@@ -2721,7 +2711,6 @@ def get_link_details():
 
 @app.route('/link-details/data')
 @login_required
-@ip_and_others
 def get_link_details_data():
     query = db.session.query(
         Customer.customer_name,
@@ -2933,13 +2922,14 @@ def verify_code_for_password():
         return redirect(url_for('add_customer_password', customers_code=customer_code))
     else:
         flash('Please enter a valid customer code')
+        return redirect(url_for('get_customers_password'))
 
 
 @app.route('/customers-password/<customers_code>', methods=['GET', 'POST'])
 @login_required
 @ip_only
-def add_customer_pasword(customers_code):
-    customer = Customer.query(Customer.customer_name, Customer.customer_code).filter_by(
+def add_customer_password(customers_code):
+    customer = db.session.query(Customer.customer_name, Customer.customer_code).filter_by(
         customer_code=customers_code).one_or_none()
 
     form = CustomerPasswordForm(
@@ -2947,11 +2937,14 @@ def add_customer_pasword(customers_code):
         customer_code=customer[1],
     )
 
+    print('about to validate')
     if form.validate_on_submit():
-        if CustomerPassword.query.filter_by(customer_code=form.customer_code.data):
+        print('validated')
+        if CustomerPassword.query.filter_by(customer_code=form.customer_code.data).one_or_none():
             flash(
                 f'There is an existing entry for customer {form.customer_code.data}.')
         else:
+            print('about to set')
             key = load_key()
             f = Fernet(key)
 
@@ -2966,6 +2959,7 @@ def add_customer_pasword(customers_code):
                         form.customer_password.data.encode())
                 )
                 customer_password.insert()
+                print('added and committed')
                 flash(
                     f'Password saved for customer {form.customer_username.data}.')
                 return redirect(url_for('get_customers_password'))
@@ -3038,7 +3032,7 @@ def upload_customers_password_csv():
         for field, message in upload_form.errors.items():
             flash(field + ' - ' + str(message), 'danger')
 
-    return render_template('forms/ip/customerpasword.html', form=upload_form, is_upload=True, current_user=current_user)
+    return render_template('forms/ip/customerpassword.html', form=upload_form, is_upload=True, current_user=current_user)
 
 
 @app.route('/customers-password/<customer_code>/edit', methods=['POST', 'PATCH', 'GET'])
@@ -3087,7 +3081,7 @@ def update_customer_password(customer_code):
 
 @app.route('/customers-password/<customer_code>/delete', methods=['GET', 'DELETE'])
 @login_required
-@ip_only
+@admin_and_ip
 def delete_customer_passoword(customer_code):
     customer = CustomerPassword.query.filter_by(customer_code=customer_code).one_or_none()
 
@@ -3115,7 +3109,7 @@ def get_customers_prtg():
 @app.route('/customers-prtg/data')
 @login_required
 def get_customers_prtg_data():
-    query = CustomerPassword.query
+    query = CustomerPRTG.query
 
     key = load_key()
     f = Fernet(key)
@@ -3143,8 +3137,6 @@ def get_customers_prtg_data():
         'data': [{
             'customer_code': customer.customer_code,
             'customer_name': customer.customer_name,
-            'customer_device_type': customer.customer_device_type,
-            'customer_device_ip': customer.customer_device_ip,
             'customer_username': customer.customer_username,
             'customer_password': f.decrypt(customer.customer_password).decode()
         } for customer in query],
@@ -3156,7 +3148,6 @@ def get_customers_prtg_data():
 
 @app.route('/customers-prtg/verify', methods=['GET', 'POST'])
 @login_required
-@ip_only
 def verify_code_for_prtg():
     customer_code = request.form.get('customer_code')
 
@@ -3164,13 +3155,14 @@ def verify_code_for_prtg():
         return redirect(url_for('add_customer_prtg', customers_code=customer_code))
     else:
         flash('Please enter a valid customer code')
+        return redirect(url_for('get_customers_prtg'))
 
 
 @app.route('/customers-prtg/<customers_code>', methods=['GET', 'POST'])
 @login_required
-@ip_only
+@admin_and_ip
 def add_customer_prtg(customers_code):
-    customer = Customer.query(Customer.customer_name, Customer.customer_code).filter_by(
+    customer = db.session.query(Customer.customer_name, Customer.customer_code).filter_by(
         customer_code=customers_code).one_or_none()
 
     form = CustomerPRTGForm(
@@ -3179,10 +3171,12 @@ def add_customer_prtg(customers_code):
     )
 
     if form.validate_on_submit():
-        if CustomerPRTG.query.filter_by(customer_code=form.customer_code.data):
+        print('entered')
+        if CustomerPRTG.query.filter_by(customer_code=form.customer_code.data).one_or_none():
             flash(
                 f'There is an existing entry for customer {form.customer_code.data}.')
         else:
+            print('validated')
             key = load_key()
             f = Fernet(key)
 
@@ -3194,6 +3188,7 @@ def add_customer_prtg(customers_code):
                     customer_password=f.encrypt(form.customer_password.data.encode())
                 )
                 customer_prtg.insert()
+                print('added')
                 flash(
                     f'PRTG details saved for customer {form.customer_username.data}.')
                 return redirect(url_for('get_customers_prtg'))
@@ -3268,7 +3263,7 @@ def upload_customers_prtg_csv():
 
 @app.route('/customers-prtg/<customer_code>/edit', methods=['POST', 'PATCH', 'GET'])
 @login_required
-@ip_only
+@admin_and_ip
 def update_customer_prtg(customer_code):
     customer = CustomerPRTG.query.filter_by(
         customer_code=customer_code).one_or_none()
@@ -3310,7 +3305,7 @@ def update_customer_prtg(customer_code):
 
 @app.route('/customers-prtg/<customer_code>/delete', methods=['GET', 'DELETE'])
 @login_required
-@ip_only
+@admin_and_ip
 def delete_customer_prtg(customer_code):
     customer = CustomerPRTG.query.filter_by(
         customer_code=customer_code).one_or_none()
@@ -3379,24 +3374,27 @@ def verify_code_for_lat():
         return redirect(url_for('add_link_activation_tracker', customers_code=customer_code))
     else:
         flash('Please enter a valid customer code')
+        return redirect(url_for('get_link_activation_trackers'))
 
 
 @app.route('/link-activation-trackers/<customers_code>', methods=['GET', 'POST'])
 @login_required
 @ip_only
 def add_link_activation_tracker(customers_code):
-    customer = Customer.query(Customer.customer_name, Customer.customer_code).filter_by(
+    customer = db.session.query(Customer.customer_name, Customer.customer_code, Customer.customer_basestation_id).filter_by(
         customer_code=customers_code).one_or_none()
 
     form = LinkActivationTrackerForm(
         customer_name=customer[0],
         customer_code=customer[1],
+        customer_basestation_id=customer[2]
     )
-    
-    form.customer_basestation_id.choices = [(basestation.basestation_id, basestation.basestation_id) for basestation in Basestation.query.order_by('server_name')]
+
+    form.customer_basestation_id.choices = [(bts.basestation_id, bts.basestation_id)
+                                            for bts in Basestation.query.order_by('basestation_id')]
 
     if form.validate_on_submit():
-        if LinkActivationTracker.query.filter_by(customer_code=form.customer_code.data):
+        if LinkActivationTracker.query.filter_by(customer_code=form.customer_code.data).one_or_none():
             flash(
                 f'There is an existing entry for customer {form.customer_code.data}.')
         else:
@@ -3405,14 +3403,13 @@ def add_link_activation_tracker(customers_code):
                     customer_name=form.customer_name.data,
                     customer_code=form.customer_code.data,
                     customer_basestation_id=form.customer_basestation_id.data,
-                    customer_service_desc=form.customer_service_desc,
+                    customer_service_desc=form.customer_service_desc.data,
                     customer_request_date=form.customer_request_date.data,
                     customer_link_completion_date=form.customer_link_completion_date.data,
                     customer_implemented_by=form.customer_implemented_by.data
                 )
                 lat.insert()
-                flash(
-                    f'Link activation tracker saved for customer {form.customer_code.data}.')
+                flash(f'Link activation tracker saved for customer {form.customer_code.data}.')
                 return redirect(url_for('get_link_activation_trackers'))
             except:
                 db.session.rollback()
@@ -3426,7 +3423,7 @@ def add_link_activation_tracker(customers_code):
         for field, message in form.errors.items():
             flash(field + ' - ' + str(message), 'danger')
 
-    return render_template('forms/ip/linkactivationtracker.html.html', form=form, current_user=current_user)
+    return render_template('forms/ip/linkactivationtracker.html', form=form, current_user=current_user)
 
 
 @app.route('/link-activation-trackers/upload', methods=['POST', 'GET'])
@@ -3508,7 +3505,8 @@ def update_link_activation_tracker(customer_code):
         customer_implemented_by=customer.customer_implemented_by   
     )
 
-    edit_form.customer_basestation_id.choices = [(basestation.basestation_id, basestation.basestation_id) for basestation in Basestation.query.order_by('server_name')]
+    edit_form.customer_basestation_id.choices = [
+        (basestation.basestation_id, basestation.basestation_id) for basestation in Basestation.query.order_by('basestation_id')]
 
 
     if edit_form.validate_on_submit():
@@ -3522,8 +3520,7 @@ def update_link_activation_tracker(customer_code):
             customer.customer_implemented_by = edit_form.customer_implemented_by.data
 
             customer.update()
-            flash(
-                f'Link activation tracker updated for customer {edit_form.customer_code.data}.')
+            flash(f'Link activation tracker updated for customer {edit_form.customer_code.data}.')
             return redirect(url_for('get_link_activation_trackers'))
         except:
             db.session.rollback()
@@ -3604,7 +3601,6 @@ def get_change_implementation_trackers_data():
 
 @app.route('/change-implementation-trackers/verify', methods=['GET', 'POST'])
 @login_required
-@ip_only
 def verify_code_for_cit():
     customer_code = request.form.get('customer_code')
 
@@ -3618,7 +3614,7 @@ def verify_code_for_cit():
 @login_required
 @ip_only
 def add_change_implementation_tracker(customers_code):
-    customer = Customer.query(Customer.customer_name, Customer.customer_code).filter_by(
+    customer = db.session.query(Customer.customer_name, Customer.customer_code).filter_by(
         customer_code=customers_code).one_or_none()
 
     form = ChangeImplementationTrackerForm(
@@ -3627,27 +3623,26 @@ def add_change_implementation_tracker(customers_code):
     )
 
     if form.validate_on_submit():
-        if ChangeImplementationTracker.query.filter_by(customer_code=form.customer_code.data):
+        if ChangeImplementationTracker.query.filter_by(customer_change_id=form.customer_change_id.data).one_or_none():
             flash(
-                f'There is an existing entry for customer {form.customer_code.data}.')
+                f'There is an existing entry for change id {form.customer_change_id.data}.')
         else:
             try:
                 cit = ChangeImplementationTracker(
                     customer_name=form.customer_name.data,
                     customer_code=form.customer_code.data,
                     customer_change_id=form.customer_change_id.data,
-                    customer_change_desc=form.customer_change_desc,
+                    customer_change_desc=form.customer_change_desc.data,
                     customer_change_type=form.customer_change_type.data,
                     customer_instructed_by=form.customer_instructed_by.data,
                     customer_approved_by=form.customer_approved_by.data,
-                    customer_request_date=form.customer_request_date,
+                    customer_request_date=form.customer_request_date.data,
                     customer_implementation_date_and_time=form.customer_implementation_date_and_time.data,
                     customer_implemented_by=form.customer_implemented_by.data,
                     customer_status=form.customer_status.data
                 )
                 cit.insert()
-                flash(
-                    f'Change implementation tracker saved for customer {form.customer_code.data}.')
+                flash(f'Change implementation tracker saved for customer {form.customer_code.data}.')
                 return redirect(url_for('get_change_implementation_trackers'))
             except:
                 db.session.rollback()
@@ -3661,7 +3656,7 @@ def add_change_implementation_tracker(customers_code):
         for field, message in form.errors.items():
             flash(field + ' - ' + str(message), 'danger')
 
-    return render_template('forms/ip/changeimplementationtracker.html.html', form=form, current_user=current_user)
+    return render_template('forms/ip/changeimplementationtracker.html', form=form, current_user=current_user)
 
 
 @app.route('/change-implementation-trackers/upload', methods=['POST', 'GET'])
@@ -3784,7 +3779,7 @@ def update_change_implementation_tracker(change_id):
         for field, message in edit_form.errors.items():
             flash(field + ' - ' + str(message), 'danger')
 
-    return render_template('forms/ip/changeimplementation.html', form=edit_form, is_edit=True, current_user=current_user)
+    return render_template('forms/ip/changeimplementationtracker.html', form=edit_form, is_edit=True, current_user=current_user)
 
 
 @app.route('/change-implementation-trackers/<change_id>/delete', methods=['GET', 'DELETE'])

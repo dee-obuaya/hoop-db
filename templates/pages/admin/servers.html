@@ -30,16 +30,17 @@
             { id: 's_n', name: '', width:'20px' },
             { id: 'server_name', name: 'Server Name', formatter: (cell) => gridjs.html(`<a href='/servers/${cell}/edit'}}'>${cell}</a>`) },
             { id: 'server_ip', name: 'Server IP' },
-            { id: 'server_loccation', name: 'Server Location' },
+            { id: 'server_location', name: 'Server Location' },
             { id: 'del', name: '', width:'80px', formatter: (_, row) => gridjs.html(`<a href='/servers/${row.cells[1].data}/delete'}}' onclick="return confirm('Are you sure you want to delete this server?');"><i class="fa-solid fa-trash"></i></a>`) }
         ],
-        resizable: true,
-        height: '50%',
+        fixedHeader: true,
+        // height: '600px',
         server: {
             url: '/servers/data',
             then: results => results.data,
             total: results => results.total,
         },
+        resizable: true,
         search: {
             enabled: true,
             server: {

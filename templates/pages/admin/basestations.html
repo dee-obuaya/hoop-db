@@ -35,13 +35,14 @@
             { id: 'basestation_contact', name: 'Basestation Contact' },
             { id: 'del', name: '', width:'80px', formatter: (_, row) => gridjs.html(`<a href='/basestations/${row.cells[1].data}/delete'}}' onclick="return confirm('Are you sure you want to delete this basestation?');"><i class="fa-solid fa-trash"></i></a>`) }
         ],
-        resizable: true,
-        height: '50%',
+        fixedHeader: true,
+        // height: '600px',
         server: {
             url: '/basestations/data',
             then: results => results.data,
             total: results => results.total,
         },
+        resizable: true,
         search: {
             enabled: true,
             server: {

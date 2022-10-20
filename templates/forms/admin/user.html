@@ -32,6 +32,7 @@
 
         <div class="button">
             <input class="btn btn-lg btn-block" type="submit" value="UPLOAD">
+            <a role="button" href="{{ url_for('get_users') }}" class="btn btn-lg btn-block">Cancel</a>
         </div>
     </form>
     {% elif is_edit %}
@@ -59,7 +60,8 @@
         </div>
 
         <div class="button">
-            <input type="submit" value="Edit User" class="btn btn-lg btn-block">
+            <input type="submit" value="update" class="btn btn-lg btn-block">
+            <a role="button" href="{{ url_for('get_users') }}" class="btn btn-lg btn-block">Cancel</a>
         </div>
     </form>
     {% else: %}
@@ -87,7 +89,8 @@
         </div>
 
         <div class="button">
-            <input type="submit" value="Add User" class="btn btn-lg btn-block">
+            <input type="submit" value="add" class="btn btn-lg btn-block">
+            <a role="button" href="{{ url_for('get_users') }}" class="btn btn-lg btn-block">Cancel</a>
         </div>
     </form>
     {% endif %}

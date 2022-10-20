@@ -33,13 +33,14 @@
             { id: 'service_dec', name: 'Service Desc' },
             { id: 'del', name: '', width:'80px', formatter: (_, row) => gridjs.html(`<a href='/service-types/${row.cells[1].data}/delete' onclick="return confirm('Are you sure you want to delete this service?');"><i class="fa-solid fa-trash"></i></a>`) }
         ],
-        resizable: true,
-        height: '50%',
+        fixedHeader: true,
+        // height: '600px',
         server: {
             url: '/service-types/data',
             then: results => results.data,
             total: results => results.total,
         },
+        resizable: true,
         search: {
             enabled: true,
             server: {

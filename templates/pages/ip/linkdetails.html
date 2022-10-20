@@ -49,14 +49,15 @@
             { id: 'customer_activation_date', name: 'Activation Date', width: '180px' },
             { id: 'customer_installation_engineer', name: 'Installation Engineer', width: '180px' },
         ],
-        width: 2000,
-        resizable: true,
-        height: '50%',
+        width: 1800,
+        fixedHeader: true,
+        height: '600px',
         server: {
             url: '/link-details/data',
             then: results => results.data,
             total: results => results.total,
         },
+        resizable: true,
         search: {
             enabled: true,
             server: {

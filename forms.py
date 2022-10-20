@@ -54,9 +54,12 @@ class PartnerForm(FlaskForm):
 
 class BasestationForm(FlaskForm):
     basestation_id = StringField('basestation_id', validators=[DataRequired()])
-    basestation_name = StringField('basestation_name', validators=[DataRequired()])
-    basestation_location = StringField('basestation_location', validators=[DataRequired()])
-    basestation_contact = StringField('basestation_contact', validators=[DataRequired()])
+    basestation_name = StringField(
+        'basestation_name', validators=[DataRequired()])
+    basestation_location = StringField(
+        'basestation_location', validators=[DataRequired()])
+    basestation_contact = StringField(
+        'basestation_contact', validators=[DataRequired()])
 
 
 class ServerForm(FlaskForm):
@@ -70,7 +73,8 @@ class ServerForm(FlaskForm):
 
 class VlanForm(FlaskForm):
     vlan_id = StringField('vlan_id', validators=[DataRequired()])
-    customer_assigned = StringField('customer_assigned', validators=[DataRequired()])
+    customer_assigned = StringField(
+        'customer_assigned', validators=[DataRequired()])
 
 
 class ConnectionForm(FlaskForm):
@@ -111,7 +115,16 @@ class CustomerForm(FlaskForm):
                                 DataRequired()])
     customer_code = StringField('customer_code', validators=[
                                 DataRequired()])
-    customer_status = StringField('customer_status')
+    customer_status = SelectField('customer_status',
+                                  choices=[('New Provision', 'New Provision'),
+                                           ('Active Enabled', 'Active Enabled'),
+                                           ('Active Suspended',
+                                            'Active Suspended'),
+                                           ('Active Disconnected',
+                                            'Active Disconnected'),
+                                           ('Churned', 'Churned'),
+                                           ('Closed', 'Closed')]
+                                  )
     customer_server = SelectField('customer_server')
     customer_conn_type = SelectField('customer_conn_type')
     customer_location = SelectField(
@@ -156,13 +169,24 @@ class CustomerForm(FlaskForm):
         ]
     )
     customer_partner = SelectField('customer_partner')
-    customer_basestation_location = StringField('customer_basestation_location')
+    customer_basestation_location = StringField(
+        'customer_basestation_location')
     customer_basestation_id = SelectField('customer_basestation_id')
     customer_sector = StringField('customer_sector')
     customer_switch = StringField('customer_switch')
     customer_management_vlan = StringField('customer_management_vlan')
     customer_traffic_vlan = StringField('customer_traffic_vlan')
-    customer_subnet = StringField('customer_subnet')
+    customer_subnet = SelectField(
+        'customer_subnet',
+        choices=[('255.255.255.0/24', '255.255.255.0/24'),
+                 ('255.255.255.128/25', '255.255.255.128/25'),
+                 ('255.255.255.192/26', '255.255.255.192/26'),
+                 ('255.255.255.224/27', '255.255.255.224/27'),
+                 ('255.255.255.240/28', '255.255.255.240/28'),
+                 ('255.255.255.248/29', '255.255.255.248/29'),
+                 ('255.255.255.252/30', '255.255.255.252/30'),
+                 ('255.255.255.252/32', '255.255.255.252/32'), ]
+    )
     customer_mu_ip = StringField('customer_mu_ip')
     customer_su_ip = StringField('customer_su_ip')
     customer_ssid = StringField('customer_ssid')
@@ -181,7 +205,17 @@ class CustomerForm(FlaskForm):
     customer_wan_routing_protocol = StringField(
         'customer_wan_routing_protocol')
     customer_ip = StringField('customer_ip')
-    customer_subnet_mask = StringField('customer_subnet_mask')
+    customer_subnet_mask = SelectField(
+        'customer_subnet_mask',
+        choices=[('255.255.255.0/24', '255.255.255.0/24'),
+                 ('255.255.255.128/25', '255.255.255.128/25'),
+                 ('255.255.255.192/26', '255.255.255.192/26'),
+                 ('255.255.255.224/27', '255.255.255.224/27'),
+                 ('255.255.255.240/28', '255.255.255.240/28'),
+                 ('255.255.255.248/29', '255.255.255.248/29'),
+                 ('255.255.255.252/30', '255.255.255.252/30'),
+                 ('255.255.255.252/32', '255.255.255.252/32'), ]
+    )
     customer_gateway = StringField('customer_gateway')
     customer_service_type = SelectField('customer_service_type')
     customer_service_plan = SelectField('customer_service_plan')
@@ -240,8 +274,9 @@ class ChangeImplementationTrackerForm(FlaskForm):
         'customer_change_id', validators=[DataRequired()])
     customer_change_desc = StringField(
         'customer_change_desc', validators=[DataRequired()])
-    customer_change_type = StringField(
-        'customer_change_type', validators=[DataRequired()])
+    customer_change_type = SelectField(
+        'customer_change_type', choices=[(
+            'Temporary', 'Temporary'), ('Permanent', 'Permanent')], validators=[DataRequired()])
     customer_instructed_by = StringField(
         'customer_instructed_by', validators=[DataRequired()])
     customer_approved_by = StringField(

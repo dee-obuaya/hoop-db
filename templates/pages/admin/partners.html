@@ -27,20 +27,21 @@
 
     new gridjs.Grid({
         columns: [
-            { id: 's_n', name: 'S/N', width:'50px' },
-            { id: 'partner_id', name: 'Partner ID', formatter: (cell) => gridjs.html(`<a href='/partners/${cell}/edit'}}'>${cell}</a>`), width:'150px' },
-            { id: 'partner_name', name: 'Partner Name', width:'100px' },
-            { id: 'partner_contact', name: 'Partner Contact', width:'100px' },
-            { id: 'partner_address', name: 'Partner Address', width:'100px' },
-            { id: 'del', name: '', width:'00px', formatter: (_, row) => gridjs.html(`<a href='/partners/${row.cells[1].data}/delete'}}' onclick="return confirm('Are you sure you want to delete this partner?');"><i class="fa-solid fa-trash"></i></a>`) }
+            { id: 's_n', name: '', width:'20px' },
+            { id: 'partner_id', name: 'Partner ID', formatter: (cell) => gridjs.html(`<a href='/partners/${cell}/edit'}}'>${cell}</a>`) },
+            { id: 'partner_name', name: 'Partner Name' },
+            { id: 'partner_contact', name: 'Partner Contact' },
+            { id: 'partner_address', name: 'Partner Address' },
+            { id: 'del', name: '', width:'80px', formatter: (_, row) => gridjs.html(`<a href='/partners/${row.cells[1].data}/delete'}}' onclick="return confirm('Are you sure you want to delete this partner?');"><i class="fa-solid fa-trash"></i></a>`) }
         ],
-        resizable: true,
-        height: '50%',
+        fixedHeader: true,
+        // height: '600px',
         server: {
             url: '/partners/data',
             then: results => results.data,
             total: results => results.total,
         },
+        resizable: true,
         search: {
             enabled: true,
             server: {

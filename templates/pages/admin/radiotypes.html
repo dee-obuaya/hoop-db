@@ -31,13 +31,14 @@
             { id: 'radio_name', name: 'Radio Name', formatter: (cell) => gridjs.html(`<a href='/radios/${cell}/edit'}}'>${cell}</a>`) },
             { id: 'del', name: '', width:'80px', formatter: (_, row) => gridjs.html(`<a href='/radios/${row.cells[1].data}/delete'}}' onclick="return confirm('Are you sure you want to delete this radio?');"><i class="fa-solid fa-trash"></i></a>`) }
         ],
-        resizable: true,
-        height: '50%',
+        fixedHeader: true,
+        // height: '600px',
         server: {
             url: '/radios/data',
             then: results => results.data,
             total: results => results.total,
         },
+        resizable: true,
         search: {
             enabled: true,
             server: {

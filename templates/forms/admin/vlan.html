@@ -9,25 +9,28 @@
 {% block header %}
 {% if is_edit %}
 <h2 class="form-heading">Edit Vlan
-{% if (current_user.privileges != 'Admin') %}
+    {% if (current_user.privileges != 'Admin') %}
     <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
     {% else %}
     <a href="{{ url_for('admin_index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
-    {% endif %}</h2>
+    {% endif %}
+</h2>
 {% elif is_upload: %}
 <h2 class="form-heading">Upload CSV
-{% if (current_user.privileges != 'Admin') %}
+    {% if (current_user.privileges != 'Admin') %}
     <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
     {% else %}
     <a href="{{ url_for('admin_index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
-    {% endif %}</h2>
+    {% endif %}
+</h2>
 {% else: %}
 <h2 class="form-heading">Add New Vlan
-{% if (current_user.privileges != 'Admin') %}
+    {% if (current_user.privileges != 'Admin') %}
     <a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
     {% else %}
     <a href="{{ url_for('admin_index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a>
-    {% endif %}</h2>
+    {% endif %}
+</h2>
 {% endif %}
 {% endblock %}
 
@@ -42,7 +45,10 @@
             {{ form.file(class_ = 'form-control', )}}
         </div>
 
-        <input class="btn btn-lg btn-block" type="submit" value="UPLOAD">
+        <div class="button">
+            <input class="btn btn-lg btn-block" type="submit" value="UPLOAD">
+            <a role="button" href="{{ url_for('get_vlans') }}" class="btn btn-lg btn-block">Cancel</a>
+        </div>
     </form>
     {% elif is_edit %}
     <form method="post" action="{{ url_for('update_vlan', vlan_id=form.vlan_id.data) }}" class="form">
@@ -58,8 +64,10 @@
             {{ form.customer_assigned(class_ = 'form-control', placeholder='Customer Code') }}
         </div>
 
-        <input type="submit" class="btn btn-lg btn-block" value="edit vlan">
-
+        <div class="button">
+            <input type="submit" class="btn btn-lg btn-block" value="update">
+            <a role="button" href="{{ url_for('get_vlans') }}" class="btn btn-lg btn-block">Cancel</a>
+        </div>
     </form>
     {% else: %}
     <form method="post" action="{{ url_for('add_vlan') }}" class="form">
@@ -75,7 +83,10 @@
             {{ form.customer_assigned(class_ = 'form-control', placeholder='Customer Code') }}
         </div>
 
-        <input type="submit" class="btn btn-lg btn-block" value="add vlan">
+        <div class="button">
+            <input type="submit" class="btn btn-lg btn-block" value="add">
+            <a role="button" href="{{ url_for('get_vlans') }}" class="btn btn-lg btn-block">Cancel</a>
+        </div>
     </form>
     {% endif %}
 </div>

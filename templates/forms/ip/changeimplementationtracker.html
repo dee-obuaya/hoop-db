@@ -48,6 +48,8 @@
 
         <div class="button">
             <input class="btn btn-lg btn-block" type="submit" value="upload">
+            <a role="button" href="{{ url_for('get_change_implementation_trackers') }}"
+                class="btn btn-lg btn-block">Cancel</a>
         </div>
     </form>
     {% elif is_edit %}
@@ -98,7 +100,7 @@
 
         <div class="form-group">
             <label for="customer_implementation_date_and_time">Implementation Date & Time</label>
-            {{ form.customer_implementation_date_and_time(class_ = 'form-control', placeholder='YYYY-MM-DD HH:MM',
+            {{ form.customer_implementation_date_and_time(class_ = 'form-control', placeholder='YYYY-MM-DD HH:MM:SS',
             autofocus = true)}}
         </div>
 
@@ -113,7 +115,9 @@
         </div>
 
         <div class="button">
-            <input type="submit" value="Edit Change Implementation Tracker" class="btn btn-lg btn-block">
+            <input type="submit" value="update" class="btn btn-lg btn-block">
+            <a role="button" href="{{ url_for('get_change_implementation_trackers') }}"
+                class="btn btn-lg btn-block">Cancel</a>
         </div>
     </form>
     {% else: %}
@@ -163,7 +167,7 @@
 
         <div class="form-group">
             <label for="customer_implementation_date_and_time">Implementation Date & Time</label>
-            {{ form.customer_implementation_date_and_time(class_ = 'form-control', placeholder='YYYY-MM-DD HH:MM',
+            {{ form.customer_implementation_date_and_time(class_ = 'form-control', placeholder='YYYY-MM-DD HH:MM:SS',
             autofocus = true)}}
         </div>
 
@@ -178,7 +182,9 @@
         </div>
 
         <div class="button">
-            <input type="submit" value="Add Change Implementation Tracker" class="btn btn-lg btn-block">
+            <input type="submit" value="add" class="btn btn-lg btn-block">
+            <a role="button" href="{{ url_for('get_change_implementation_trackers') }}"
+                class="btn btn-lg btn-block">Cancel</a>
         </div>
     </form>
     {% endif %}
